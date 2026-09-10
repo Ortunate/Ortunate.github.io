@@ -1,0 +1,9 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { profile } from '../data/site';
+---
+<Layout title="About">
+  <section class="page-section wrap"><div class="eyebrow">04 / HUMAN</div><div class="about-layout"><div><h1>Hi, I'm<br /><span class="serif-word">ortunate.</span></h1><p class="about-lead">{profile.title}</p><p class="about-description">{profile.about}</p><div class="tags">{profile.interests.map(interest => <span>{interest}</span>)}</div><a class="button primary" href={profile.github} target="_blank" rel="noopener noreferrer">Find me on GitHub <span>↗</span></a></div><div class="identity-card tilt-card"><div class="card-index">A HUMAN ON THE INTERNET</div><div class="identity-glyph">o<span>.</span></div><div class="identity-bottom"><span>ortunate</span><span>EST. HERE & NOW</span></div></div></div>
+    <div class="about-bottom"><span class="eyebrow">A WORK IN PROGRESS</span><p>More about the person behind the pixels, soon.<br />Until then, make yourself at home.</p><a class="text-link" href="/play/">Take a break <span>↗</span></a></div>
+  </section>
+</Layout>

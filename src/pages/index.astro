@@ -1,0 +1,27 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ProjectArt from '../components/ProjectArt.astro';
+---
+<Layout home>
+  <section class="hero wrap">
+    <div class="hero-copy">
+      <div class="eyebrow"><span class="tiny-cross">✳</span> WELCOME TO MY ORBIT</div>
+      <h1>A little corner<br />of the <span class="serif-word">internet.</span></h1>
+      <p>A place to build, explore, and occasionally<br class="desktop-break" /> get wonderfully distracted.</p>
+      <div class="hero-actions"><a class="button primary magnetic" href="/projects/">Explore my work <span>↗</span></a><a class="text-link" href="/about/">A bit about me <span>↗</span></a></div>
+      <div class="hero-note"><span class="fine-line"></span> PERSONAL SPACE · ALWAYS EVOLVING</div>
+    </div>
+    <div class="hero-art" id="orbit-scene" aria-label="An animated field of particles orbiting a luminous core" role="img"><div class="orbit-fallback"><div></div><i></i><b></b></div><span class="scene-label label-top">FIG. 001 — ORBITAL FIELD</span><span class="scene-label label-bottom">A LITTLE CHAOS. A LITTLE GRAVITY.</span><span class="scene-coordinate">23.5°<br />∞ POSSIBILITIES</span></div>
+    <div class="hero-bottom"><span>SCROLL TO EXPLORE</span><span aria-hidden="true">↓</span><span>INDEPENDENT MIND, OPEN INTERNET.</span></div>
+  </section>
+  <section class="explore-section wrap">
+    <div class="section-heading"><div><div class="eyebrow">THE CONSTELLATION</div><h2>Pick a direction<span class="muted">.</span></h2></div><span class="section-aside">A few things to get lost in.</span></div>
+    <div class="destination-grid">
+      <a class="destination project-destination tilt-card reveal" href="/projects/"><div class="card-top"><span class="card-index">01 / MAKE</span><span class="round-arrow">↗</span></div><ProjectArt kind="orbit"/><div class="destination-copy"><h3>Things I've built</h3><p>Experiments, projects, and ideas<br />that escaped the notebook.</p><span class="card-link">Explore projects <span>↗</span></span></div></a>
+      <a class="destination tool-destination tilt-card reveal" href="/tools/"><div class="card-top"><span class="card-index">02 / FOCUS</span><span class="round-arrow">↗</span></div><ProjectArt kind="utility"/><div class="destination-copy"><h3>Less friction.<br />More flow.</h3><p>Little tools for everyday things.</p><span class="card-link">Open the toolbox <span>↗</span></span></div></a>
+      <a class="destination play-destination tilt-card reveal" href="/play/"><div class="card-top"><span class="card-index">03 / PLAY</span><span class="round-arrow">↗</span></div><ProjectArt kind="arcade"/><div class="destination-copy"><h3>Take a small detour</h3><p>Your next high score is waiting.</p><span class="card-link">Enter the arcade <span>↗</span></span></div></a>
+      <a class="about-strip reveal" href="/about/"><span class="about-mark">o.</span><div><span class="card-index">04 / HUMAN</span><h3>There's a person behind the pixels.</h3></div><span class="text-link">Meet ortunate <span>↗</span></span></a>
+    </div>
+  </section>
+  <script>import '../scripts/scene';</script>
+</Layout>

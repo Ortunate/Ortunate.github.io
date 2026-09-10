@@ -1,0 +1,9 @@
+---
+interface Props { kind: string }
+const { kind } = Astro.props;
+---
+<div class:list={['project-art', `art-${kind}`]} aria-hidden="true">
+  {kind === 'orbit' && <div class="mini-orbit"><i></i><i></i><i></i><b></b></div>}
+  {kind === 'utility' && <div class="mini-code"><span><em>01</em> {'{'} </span><span><em>02</em> &nbsp;"focus": <b>true</b>,</span><span><em>03</em> &nbsp;"noise": <b>0</b></span><span><em>04</em> {'}'}</span></div>}
+  {kind === 'arcade' && <div class="mini-blocks"><i>2</i><i>4</i><i>8</i><i>16</i></div>}
+</div>

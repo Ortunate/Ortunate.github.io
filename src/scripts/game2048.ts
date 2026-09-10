@@ -1,0 +1,19 @@
+import { canMove, moveBoard, newBoard, spawnTile, validBoard } from '../lib/game2048';
+import type { Direction, MoveResult } from '../lib/game2048';
+import { read, save } from './storage';
+import { gameInput } from './game-input';
+const $=(id:string)=>document.getElementById(id)!;
+interface SavedGame {board:number[];score:number;continued:boolean}
+const stored=read<Partial<SavedGame>|null>('2048:game',null);
+const valid=stored&&validBoard(stored.board)&&stored.board.some(v=>v>0)&&typeof stored.score==='number'&&Number.isSafeInteger(stored.score)&&stored.score>=0;
+let board=valid?stored.board!:newBoard(),score=valid?stored.score!:0,continued=valid&&stored.continued===true;
+const bestStored=read<unknown>('2048:best',0);let best=typeof bestStored==='number'&&Number.isSafeInteger(bestStored)&&bestStored>=0?Math.max(score,bestStored):score;
+let busy=false,gameOver=false;
+const surface=$('game-surface'),grid=$('board'),overlay=$('game-overlay'),continueButton=$('continue-game');
+function persist(){save('2048:game',{board,score,continued});save('2048:best',best);}
+function render(newIndex=-1,merged:number[]=[]){grid.replaceChildren();board.forEach((value,index)=>{const cell=document.createElement('div');cell.className='tile';cell.dataset.value=String(value);cell.textContent=value?String(value):'';cell.setAttribute('aria-label',`Row ${Math.floor(index/4)+1}, column ${index%4+1}: ${value||'empty'}`);if(value>2048)cell.classList.add('high-tile');if(index===newIndex)cell.classList.add('tile-new');if(merged.includes(index))cell.classList.add('tile-merged');grid.appendChild(cell);});$('score').textContent=String(score);$('best').textContent=String(best);}
+function check(){gameOver=!canMove(board);if(!continued&&board.some(v=>v>=2048)){overlay.hidden=false;$('overlay-title').textContent='A new constellation.';$('overlay-message').textContent='You reached 2048. Keep exploring?';continueButton.textContent='Keep playing';$('game-status').textContent='You reached 2048!';}else if(gameOver){overlay.hidden=false;$('overlay-title').textContent='An orbit well travelled.';$('overlay-message').textContent=`No more moves. Your score: ${score}.`;continueButton.textContent='Try again';$('game-status').textContent=`No more moves. Final score: ${score}.`;}else overlay.hidden=true;}
+async function animateMove(result:MoveResult){if(document.documentElement.dataset.motion==='reduced')return;const cells=Array.from(grid.children) as HTMLElement[];const animations=result.transitions.filter(t=>t.from!==t.to).map(t=>{const from=cells[t.from].getBoundingClientRect(),to=cells[t.to].getBoundingClientRect();return cells[t.from].animate([{transform:'translate(0,0)'},{transform:`translate(${to.x-from.x}px,${to.y-from.y}px)`}],{duration:110,easing:'ease-out',fill:'forwards'});});await Promise.all(animations.map(a=>a.finished.catch(()=>{})));}
+async function move(direction:Direction){if(busy||gameOver||!overlay.hidden)return;const result=moveBoard(board,direction);if(!result.changed)return;busy=true;await animateMove(result);score+=result.score;best=Math.max(best,score);const spawned=spawnTile(result.board);board=spawned.board;render(spawned.index,result.merged);persist();$('game-status').textContent=result.score?`+${result.score} points. Keep finding the possibilities.`:'A little space for the next move.';check();busy=false;}
+function restart(){if(busy)return;board=newBoard();score=0;continued=false;gameOver=false;overlay.hidden=true;render();persist();$('game-status').textContent='A fresh start. Make your first move.';surface.focus({preventScroll:true});}
+$('restart-game').addEventListener('click',restart);continueButton.addEventListener('click',()=>{if(!continued&&board.some(v=>v>=2048)){continued=true;persist();check();surface.focus({preventScroll:true});}else restart();});gameInput(surface,direction=>void move(direction));render();check();

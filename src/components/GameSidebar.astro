@@ -1,0 +1,5 @@
+---
+interface Props { snake?: boolean }
+const { snake=false }=Astro.props;
+---
+<aside class="game-sidebar"><h2>How to play</h2><p>{snake?'Collect the purple sparks. Keep moving, and avoid the walls and your own tail.':'Slide matching tiles together. Keep combining until you reach 2048.'}</p><div class="key-row" aria-label="Use arrow keys"><kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd></div><p>{snake?'Arrow keys or WASD. Space to pause.':'Arrow keys to move. One merge per tile, per move.'} Swipe on touch screens.</p>{snake&&<button class="button" id="pause-game" disabled>Pause</button>}<button class="button" id="restart-game">New game</button><div class="dpad" aria-label="Direction controls"><button data-direction="up" aria-label="Move up">↑</button><button data-direction="left" aria-label="Move left">←</button><button data-direction="down" aria-label="Move down">↓</button><button data-direction="right" aria-label="Move right">→</button></div><p class="help-text">Best score saved on this device.</p></aside>

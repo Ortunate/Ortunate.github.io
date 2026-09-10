@@ -1,0 +1,1 @@
+export function textStats(text:string) { return { characters:Array.from(text).length,compact:Array.from(text.replace(/\s/gu,'')).length,words:(text.match(/[A-Za-zÀ-ÖØ-öø-ÿ]+(?:['’-][A-Za-zÀ-ÖØ-öø-ÿ]+)*/g)||[]).length,chinese:(text.match(/\p{Script=Han}/gu)||[]).length,lines:text.length?text.split(/\r\n|\r|\n/).length:0 }; }

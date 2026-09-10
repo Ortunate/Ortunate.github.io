@@ -1,0 +1,41 @@
+---
+import '../styles/global.css';
+import { profile } from '../data/site';
+interface Props { title?: string; description?: string; home?: boolean }
+const { title = 'A little corner of the internet', description = profile.intro, home = false } = Astro.props;
+const path = Astro.url.pathname;
+const links = [['Home','/'],['Projects','/projects/'],['Tools','/tools/'],['Play','/play/'],['About','/about/']];
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#090b14" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <meta property="og:title" content={`${title} — ortunate`} />
+    <meta property="og:description" content={description} />
+    <title>{title} — ortunate</title>
+    <script is:inline>
+      try { document.documentElement.dataset.motion = localStorage.getItem('ortunate:motion') || (matchMedia('(prefers-reduced-motion: reduce)').matches ? 'reduced' : 'full'); }
+      catch { document.documentElement.dataset.motion = 'reduced'; }
+    </script>
+  </head>
+  <body class:list={[{ 'home-page': home }]}>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header wrap">
+      <a href="/" class="brand" aria-label="ortunate home"><img src="/favicon.svg" alt="" width="33" height="33" />ortunate<span class="brand-period">.</span></a>
+      <nav aria-label="Main navigation">{links.map(([label, href]) => <a href={href} aria-current={(href === '/' ? path === href : path.startsWith(href)) ? 'page' : undefined}>{label}</a>)}</nav>
+      <a class="header-github" href={profile.github} target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+    </header>
+    <main id="main"><slot /></main>
+    <footer class="site-footer wrap">
+      <span>© {new Date().getFullYear()} ortunate <span class="footer-divider">/</span> Made of curiosity.</span>
+      <div class="footer-controls"><span class="local-time" aria-label="Your local time"></span><button id="motion-toggle" class="motion-toggle" aria-label="Reduce visual motion">Motion: Full <span aria-hidden="true">◉</span></button><a href={profile.github} target="_blank" rel="noopener noreferrer" aria-label="ortunate on GitHub">GitHub ↗</a></div>
+    </footer>
+    <div id="notice" class="notice" role="status" aria-live="polite"></div>
+    <script>import '../scripts/global';</script>
+  </body>
+</html>
