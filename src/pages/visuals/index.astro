@@ -1,0 +1,6 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Collection from '../../components/Collection.astro';
+import {visuals} from '../../data/catalog';
+---
+<Layout title="Visuals" description="Twelve interactive studies in light, motion, and a little chaos."><Collection entries={visuals} kind="visuals" heading="A sense of wonder" subtitle="Twelve living studies. Move closer. Leave a trace."/><script>import '../../scripts/visuals';</script></Layout>

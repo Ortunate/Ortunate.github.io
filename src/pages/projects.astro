@@ -1,13 +1,4 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import ProjectArt from '../components/ProjectArt.astro';
-import { projects } from '../data/site';
 ---
-<Layout title="Projects">
-  <section class="page-section wrap"><div class="eyebrow">01 / MAKE</div><div class="page-heading"><h1>Things I've <span class="serif-word">built.</span></h1><p>A collection of small explorations.<br />Some useful. Some just for the joy of it.</p></div>
-    <div class="filter-row" aria-label="Filter projects">{['All','Experiment','Utility','Game'].map((tag) => <button class="filter-button" data-filter={tag} aria-pressed={tag==='All'}>{tag}</button>)}</div>
-    <div class="projects-grid">{projects.map(project => <article class="project-card reveal" data-category={project.category}><a href={project.href} class="project-art-link" aria-label={`Open ${project.title}`}><ProjectArt kind={project.visual}/>{project.demo && <span class="demo-badge">SITE DEMO</span>}<span class="round-arrow">↗</span></a><div class="project-content"><div class="card-index">{project.number} / {project.category.toUpperCase()}</div><h2><a href={project.href}>{project.title}</a></h2><p>{project.description}</p><div class="tags">{project.tags.map(tag => <span>{tag}</span>)}</div></div></article>)}</div>
-    <p class="small-note">An opening collection of working demos. More experiments will find their way here.</p>
-  </section>
-  <script>document.querySelectorAll<HTMLButtonElement>('[data-filter]').forEach(button => button.addEventListener('click', () => { document.querySelectorAll('[data-filter]').forEach(item => item.setAttribute('aria-pressed', String(item === button))); document.querySelectorAll<HTMLElement>('[data-category]').forEach(card => { card.hidden = button.dataset.filter !== 'All' && card.dataset.category !== button.dataset.filter; }); }));</script>
-</Layout>
+<Layout title="Visuals"><section class="page-section wrap"><h1>A new direction.</h1><p>The experiments now live in the visual playground.</p><a class="button primary" href="/visuals/">Explore Visuals ↗</a></section><script>location.replace('/visuals/');</script></Layout>

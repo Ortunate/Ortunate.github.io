@@ -1,10 +1,11 @@
 ---
 import '../styles/global.css';
+import '../styles/collection.css';
 import { profile } from '../data/site';
 interface Props { title?: string; description?: string; home?: boolean }
 const { title = 'A little corner of the internet', description = profile.intro, home = false } = Astro.props;
 const path = Astro.url.pathname;
-const links = [['Home','/'],['Projects','/projects/'],['Tools','/tools/'],['Play','/play/'],['About','/about/']];
+const links = [['Home','/'],['Visuals','/visuals/'],['Tools','/tools/'],['Play','/play/'],['About','/about/']];
 ---
 <!doctype html>
 <html lang="en">

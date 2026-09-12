@@ -1,10 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import Collection from '../../components/Collection.astro';
+import {games} from '../../data/catalog';
 ---
-<Layout title="Play">
-  <section class="page-section wrap"><div class="eyebrow">03 / PLAY</div><div class="page-heading"><h1>A small <span class="serif-word">detour.</span></h1><p>Nothing to finish. Nowhere to be.<br />Just one more round.</p></div><div class="arcade-grid">
-    <a class="game-card" href="/play/snake/"><div class="game-preview"><div class="snake-preview" aria-hidden="true"><i style="grid-column:2;grid-row:4"></i><i style="grid-column:2;grid-row:3"></i><i style="grid-column:2;grid-row:2"></i><i style="grid-column:3;grid-row:2"></i><i style="grid-column:4;grid-row:2"></i><i style="grid-column:5;grid-row:2"></i><i style="grid-column:5;grid-row:3"></i><i class="snake-food" style="grid-column:7;grid-row:4"></i></div><span class="demo-badge">THE CLASSIC, REWIRED</span></div><div class="game-card-body"><div class="card-index"><span>01 / REFLEX</span><span id="snake-best">BEST — 0</span></div><h2>Neon Snake</h2><p>Follow the glow. Find your rhythm. Avoid yourself.<br />Arrow keys, WASD, or swipe.</p><span class="card-link">Let's play <span>↗</span></span></div></a>
-    <a class="game-card" href="/play/2048/"><div class="game-preview preview-2048"><div class="mini-blocks" aria-hidden="true"><i>2</i><i>4</i><i>8</i><i>16</i></div><span class="demo-badge">A LITTLE NUMBER MAGIC</span></div><div class="game-card-body"><div class="card-index"><span>02 / STRATEGY</span><span id="2048-best">BEST — 0</span></div><h2>Cosmic 2048</h2><p>Small moves. Bigger possibilities.<br />Arrow keys or swipe to merge.</p><span class="card-link">Make a move <span>↗</span></span></div></a>
-  </div><p class="small-note">Your best scores stay in this browser. Take your time. They aren't going anywhere.</p></section>
-  <script>import {read} from '../../scripts/storage';for(const game of ['snake','2048']){const value=read<unknown>(`${game}:best`,0);const best=typeof value==='number'&&Number.isFinite(value)&&value>=0?value:0;document.getElementById(`${game}-best`)!.textContent=`BEST — ${best.toLocaleString('en-US')}`;}</script>
-</Layout>
+<Layout title="Play"><Collection entries={games} kind="play" heading="A small detour" subtitle="Eight little worlds. More than one way to play."/></Layout>

@@ -1,59 +1,106 @@
 # ortunate · Personal Space
 
-英文深空个人网站，使用 Astro、TypeScript、Three.js。工具与游戏在浏览器运行，适合 GitHub Pages，无需服务器。
+英文深空个人站，基于 Astro、TypeScript、Three.js。包含 8 款游戏、10 个工具和 12 种互动图样，所有处理都在浏览器本地完成，无需服务器或账号。
 
 ## 本地运行
 
-安装 Node.js 24 LTS 或更新版本，然后在项目目录运行：
+使用 Node.js 24 LTS 或更新版本：
 
 ```sh
 npm ci
 npm run dev
-```
-
-打开终端显示的本地地址。首页 3D 模块延迟加载；网络字体不可用时会使用系统字体。
-
-```sh
 npm test
 npm run build
 npm run preview
 ```
 
-`dist/` 是构建完成的静态网站，不必提交生成文件。请通过本地 HTTP 服务预览，不要双击 HTML。
+打开终端显示的本地地址。构建生成 37 个静态页面，输出到 `dist/`，不提交构建产物。限制文件系统环境可用 `ASTRO_TELEMETRY_DISABLED=1` 禁用 Astro 的遥测配置写入。
 
-## 发布到 GitHub Pages
+## 页面与内容
 
-1. 在 GitHub 账号 `ortunate` 下创建公开仓库 **ortunate.github.io**。如果仓库已存在，先保留其中需要的文件和历史，再合入本站源码。
-2. 将本项目源码（包括 `.github/workflows/deploy.yml` 和 `package-lock.json`，不包括 `node_modules`）提交并推送到该仓库的 `main` 分支。
-3. 在仓库 **Settings → Pages → Build and deployment → Source** 中选择 **GitHub Actions**。
-4. 打开 **Actions**，等待 **Deploy to GitHub Pages** 完成；必要时点击 **Run workflow** 手动运行。
-5. 访问 `https://ortunate.github.io/`，以及 `/projects/`、`/tools/`、`/play/`、`/about/`。
+- `/`：保留第一版首页星球，入口调整为 Visuals、Tools、Play。
+- `/visuals/`：动态缩略展厅、分类和搜索；每种图样在 `/visuals/[slug]/` 有完整互动页。
+- `/play/`：8 款游戏的目录，每款独立页面，通过 `?mode=0`、`?mode=1` 等切换规则。
+- `/tools/`：10 个工具的目录，每个工具独立页面。
+- `/about/`：个人介绍。
+- `/projects/`：兼容旧链接，跳转至 Visuals；旧工具锚点 `/tools/#timer`、`#json`、`#text` 跳转至对应工具。
 
-无需填写密钥，工作流使用 GitHub 自带的权限。此项目按用户根域名配置，仓库名必须是 `ortunate.github.io`；如果改用普通项目仓库，需要同时配置 Astro 的 `base` 并更新以 `/` 开头的链接和资源地址。
+### 游戏
 
-## 替换个人内容
+| 游戏 | 规则变种 |
+| --- | --- |
+| Cosmic 2048 | 经典 4×4、宽松 5×5、同数连线、递增数字链 |
+| Neon Snake | 经典、穿墙、固定障碍；三档速度 |
+| Falling Blocks | 无尽计分、40 行竞速；预览、暂存、硬降 |
+| Prism Break | 五关挑战、无尽波次；鼠标、触控、方向键 |
+| Minefield | 9×9 / 10 雷、16×16 / 40 雷、30×16 / 99 雷；首击安全、标旗 |
+| Echo Pairs | 4×4、6×4；自由练习与限时挑战 |
+| Sliding Space | 3×3、4×4；数字和渐变皮肤；保证打乱可解 |
+| Game of Life | 固定 / 环绕边界；绘制、单步、运行、滑翔机、脉冲星、随机预设 |
 
-- `src/data/site.ts`：昵称、简介、GitHub 链接、兴趣和作品列表。`demo` 标记为演示作品。作品链接应是真实可用的网址或本站页面，不使用 `#` 占位。
-- `src/pages/index.astro`：首页标题、副标题和分区文案。
-- `src/pages/about.astro`：个人介绍的布局及补充内容。
-- `src/styles/global.css`：配色、字体、布局和动效；主要颜色集中在文件顶部变量中。
-- `src/scripts/scene.ts`：首页轨道、粒子和辉光。
-- `public/favicon.svg`：网站图标。
+2048 连线允许横竖与斜向相邻格子，不重复经过格子，回退上一格撤销一步。拖动松手提交，也可以逐格点击后按 Connect。键盘方向键移动焦点，Space 选入，Enter 提交，Backspace 回退，Esc 取消。
 
-添加新页面时，在 `src/pages/` 添加 `.astro` 文件，并将导航加入 `src/layouts/Layout.astro`。所有分页构建为独立目录 HTML，支持直接访问和刷新。
+- 同数连线：至少两个相同数字，总和向上取整至最近的 2 的幂，例如 2+2+2→8。
+- 递增数字链：前两格相同，之后等于累计值，例如 2→2→4→8→16。
+- 合并结果先落在路径终点，然后消除、重力下落并补入 2/4；合并值计分。无合法连接结束，达到 2048 可以继续。
 
-## 使用说明
+快捷键只在游戏区域聚焦时生效。实时游戏切后台自动暂停，打砖块可按住方向键连续移动。成绩按游戏和模式隔离：扫雷和 40 行竞速记录最短完成时间，拼图记录最少步数，Life 不写最高分；旧计分记录保留在原存储键中。2048 与拼图自动保存棋盘，拼图恢复时验证可解性，经典 2048 兼容旧存档，经典贪吃蛇兼容旧最高分。其他游戏重进时开始新局。扫雷专家模式在窄屏内横向滚动，不挤小格子。
 
-- 页脚 **Motion** 切换完整/减少动效，首次访问遵循系统偏好。不支持 WebGL 时显示静态轨道。切换后台会停止场景渲染。
-- 番茄钟默认 25/5 分钟，专注时长支持 1–180 分钟，休息支持 1–60 分钟。切换阶段会重置当前倒计时；完成后由你手动开始下一阶段。
-- JSON 支持格式化、压缩、复制；输入上限为 200 万字符，原始文本不会上传或持久化。
-- 字数统计区分英文单词、中文字符，字符数按 Unicode 码点计数，空白包含换行。
-- 贪吃蛇支持方向键、WASD、滑动和方向按钮，空格暂停；切换后台自动暂停。
-- 2048 支持方向键、滑动和方向按钮，自动保存棋盘。New game 会开始新棋盘并保留最高分。
-- 偏好、计时器与分数仅保存在当前浏览器。清理浏览器数据会清除这些记录；禁用存储时仍可使用，页面会提示无法保存。
+### 工具
 
-## 验证
+番茄钟、JSON 格式化/压缩、字数统计、秒/毫秒时间戳转换、UTF-8 Base64 / URL 编解码、HEX/RGB/HSL 与 CSS 渐变、正则测试、密码生成、单位换算、随机抽签。
 
-`npm test` 覆盖合并、移动、生成方块、游戏结束、贪吃蛇碰撞及吃食物、计时器暂停和后台时间、文本统计。`npm run build` 执行 Astro/TypeScript 检查并生成所有静态页面。
+- 番茄钟默认 25/5 分钟，使用绝对时间处理后台停留；完成后手动开始下一阶段。
+- JSON 和文本最多 200 万字符。文本不上传、不保存，输出以纯文本呈现。
+- 正则在独立 Worker 中运行，1 秒超时终止，最多展示 2,000 个匹配；支持捕获组和 Unicode 零宽匹配。
+- 密码使用浏览器安全随机数，每个选中的字符集至少出现一次，不保存结果。
+- 随机抽签支持重复/不重复；不重复模式会先去重候选项。
+- 单位包括长度、质量、温度、面积、体积；加仑与杯明确使用美制。
+- 剪贴板权限不足时提示手动选择复制。
+- 修改输入或规则会清除旧结果并禁用复制；文本、色彩和单位实时重算。正则的表达式、标志或文本任一变化都会取消旧任务，过期响应不能覆盖新结果。
+- 色彩工具支持单独复制第一色的 HEX / RGB / HSL，以及完整渐变 CSS。
 
-手动验收：手机和桌面布局、键盘导航、触控手势、减少动效、关闭 WebGL、禁用存储、剪贴板拒绝、分页刷新、两款游戏结束/重开/恢复。
+### 图样
+
+Orbital Field、Ribbon Trails、Repulsion Grid、Gravity Wells、Flow Field、Ripple Surface、Aurora Curtains、Fractal Explorer、Kaleidoscope、Elastic Mesh、Flocking、Warp Tunnel。
+
+每种两套预设，支持配色、速度、作用强度和专属参数。详情页支持全屏、PNG 导出、暂停、重置与随机预设。画布聚焦后：方向键控制作用点或相机，Enter 激发该图样的主要动作，Space 暂停，R 重置；星球与分形支持滚轮、捏合及 + / − 缩放。具体操作以侧栏为准。
+
+- Orbital Field 与首页共用原版场景工厂：相同的暗色网格核心、9,000 点倾斜粒子环、极轨、几何参数和辉光。详情页增加拖动与缩放。
+- Fractal Explorer 重做为 Mandelbulb / Mandelbox 三维分形雕塑，使用光线步进、表面法线、软阴影、环境遮蔽、金属材质与轮廓光。拖动绕行，Enter 切换慢速巡游；可调复杂度、材质与光照角度，预设切换淡出衔接。
+- Warp Tunnel 重做为三层纵深的 GPU 实例化星尘，移除多边形环框。Deep Space 为疏朗深空，Dust Passage 为密集尘带。连续积分位移，按住鼠标或 Enter 平滑加速，松开缓慢减速；速度共同影响星轨长度、视野与转向。
+- 缩略与详情共用场景实现；缩略目标 24fps，详情目标 60fps（实际速度取决于设备）。离屏和后台不绘制，较慢设备降低分辨率。
+- GPU 图样在首次进入视口时初始化；总览共用一个 WebGL 渲染器，详情页直接渲染到主画布，其余效果用 Canvas 2D；不嵌入 iframe。单个 shader 失败不会禁用其他图样。
+- 模拟推进与绘制分离，PNG 直接导出现有帧。暂停和减少动效不推进粒子状态；波纹有生命周期和数量上限；尺寸变化保留粒子位置，非结构参数不重置场景。
+- Motion 设置遵循系统减少动效偏好，并可由页脚覆盖。WebGL 不可用时显示备用构图。
+
+## 开发入口
+
+- `src/data/catalog.ts`：游戏、工具、图样注册表及模式名称。
+- `src/data/site.ts`：昵称、简介和 GitHub 链接。
+- `src/lib/visual-engine.ts`、`visual-simulation.ts`：二维图样绘制与模拟；`gpu-visual.ts`：三维交互与生命周期；`visual-webgl.ts`：渲染资源管理；`visuals/`：三个独立 GPU 场景；`motion.ts`：隧道惯性与位移积分。
+- `src/scripts/games/`：游戏控制器；`src/lib/game2048.ts`、`arcade-rules.ts`：可独立测试的规则。
+- `src/styles/collection.css`：新目录、工作区与响应式样式；`global.css` 保留第一版主题。
+- `src/scripts/scene.ts`：首页星球入口；与图样详情共用 `src/lib/visuals/orbit.ts`。
+- 已移除不再被页面引用的旧版 `game2048`、`snake`、`game-input`、`tools` 脚本，原文件可从 Git 恢复；保留仍用于回归测试的旧纯逻辑模块。
+
+## 验证与手动检查
+
+`npm test` 覆盖棋盘与连线规则、方块消行、蛇碰撞、扫雷首击安全、拼图可解性、生命游戏演化、计时、工具转换、安全随机数、正则 Worker 和隧道连续加减速。运行时测试通过事件/画布适配器检查暂停、导出、尺寸变化、资源释放、错误隔离、游戏状态、按键释放和过期结果，不启动浏览器。
+
+`npm run build` 执行 Astro/TypeScript 检查，生成静态页面并验证 37 个路由及站内资源链接。Three.js 按需加载，构建可能提示其共享依赖包超过 500kB。
+
+按用户要求，最终动效与移动端手感由用户手动验收，不再使用 Computer Use。建议优先检查：
+
+1. Warp Tunnel 快速点击、长按、松开时位置连续，方向切换平滑。
+2. Orbital Field 的粒子、辉光、预设和全屏；与首页原版星球比较。
+3. Fractal Explorer 两种三维形态、光照/复杂度变化、拖动/捏合/滚轮缩放、Enter 巡游和暂停。
+4. 2048 两种连线的拖动、键盘、回退、重开和存档恢复。
+5. 游戏模式切换、手机布局、触控、后台暂停，以及工具错误输入。
+6. 减少动效、存储禁用、WebGL 不可用、剪贴板拒绝的提示与降级。
+
+## GitHub Pages
+
+沿用 `.github/workflows/deploy.yml`。需要发布时，将源码推送到 `main`，仓库 Pages 的来源选择 GitHub Actions。当前配置对应 `https://ortunate.github.io/`，采用静态目录 HTML，详情页支持直接访问和刷新。
+
+本地开发不会自动发布；推送到 `main` 后，由上述 GitHub Actions 工作流构建并部署。

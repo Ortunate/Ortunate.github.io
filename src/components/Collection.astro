@@ -1,0 +1,19 @@
+---
+import type {Entry} from '../data/catalog';
+interface Props {entries:Entry[];kind:'play'|'tools'|'visuals';heading:string;subtitle:string}
+const {entries,kind,heading,subtitle}=Astro.props;
+const categories=['All',...new Set(entries.map(e=>e.category))];
+---
+<section class="page-section wrap collection" data-collection>
+<div class="eyebrow">{kind==='visuals'?'01 / OBSERVE':kind==='tools'?'02 / FOCUS':'03 / PLAY'}</div>
+<div class="page-heading"><h1>{heading}<span class="serif-word">.</span></h1><p>{subtitle}</p></div>
+<div class="collection-toolbar"><div class="filter-row" aria-label="Categories">{categories.map(c=><button class="filter-button" data-category-filter={c} aria-pressed={c==='All'}>{c}</button>)}</div><label class="search-label"><span class="sr-only">Search {kind}</span><input type="search" data-search placeholder={`Find your next ${kind==='visuals'?'wonder':kind==='play'?'game':'tool'}…`}/></label></div>
+<div class:list={['collection-grid',{'visual-grid':kind==='visuals'}]}>{entries.map((e,i)=><a class="collection-card" href={`/${kind}/${e.slug}/`} data-entry data-category={e.category} data-search-text={`${e.title} ${e.description} ${e.category} ${e.modes.join(' ')}`.toLowerCase()}><div class:list={['collection-art',`art-${kind}`,`art-${e.slug}`]} style={`--card-hue:${240+i*23}`}>
+{kind==='visuals'?<canvas data-visual={e.slug} data-preview aria-label={`${e.title} animated preview`}/>:<span class="catalog-glyph" aria-hidden="true">{e.icon}</span>}
+<span class="art-number">{String(i+1).padStart(2,'0')}</span><span class="art-action" aria-hidden="true">↗</span>{kind==='visuals'&&<span class="live-badge"><i></i> LIVE STUDY</span>}</div>
+<div class="collection-copy"><div class="card-index">{e.category}{e.modes.length>0&&` / ${e.modes.length} ${kind==='visuals'?'presets':'modes'}`}</div><h2>{e.title}</h2><p>{e.description}</p><span class="collection-link">{kind==='visuals'?'Enter the field':kind==='play'?'Play a round':'Open tool'} <span>↗</span></span></div></a>)}</div>
+<p class="collection-count" role="status" data-count>{entries.length} entries · All yours to explore.</p>
+</section>
+<script>
+document.querySelectorAll<HTMLElement>('[data-collection]').forEach(root=>{let category='All';const input=root.querySelector<HTMLInputElement>('[data-search]')!;const cards=Array.from(root.querySelectorAll<HTMLElement>('[data-entry]'));function filter(){let n=0;cards.forEach(card=>{card.hidden=!((category==='All'||card.dataset.category===category)&&card.dataset.searchText!.includes(input.value.trim().toLowerCase()));if(!card.hidden)n++;});root.querySelector('[data-count]')!.textContent=n?`${n} entries · All yours to explore.`:'No matches. Try another word or category.';}root.querySelectorAll<HTMLButtonElement>('[data-category-filter]').forEach(button=>button.addEventListener('click',()=>{category=button.dataset.categoryFilter!;root.querySelectorAll('[data-category-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));filter();}));input.addEventListener('input',filter);});
+</script>
