@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev --host 127.0.0.1",
-    "build": "astro check && astro build && node scripts/check-build.mjs",
+    "build": "astro check && astro build && node scripts/check-build.mjs && node scripts/check-performance.mjs",
     "preview": "astro preview --host 127.0.0.1",
     "test": "node --test tests/*.test.ts"
   },

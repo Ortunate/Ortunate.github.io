@@ -47,8 +47,25 @@ if (host) {
             host.querySelector('canvas')?.remove();
         }
     };
-    if ('requestIdleCallback' in window)
-        window.requestIdleCallback(() => void start(), { timeout: 1000 });
-    else
-        setTimeout(() => void start(), 150);
+    // Keep the CSS planet until animation is requested and the scene is visible.
+    let started = false, scheduled = false, inView = false;
+    const launch = () => {
+        scheduled = false;
+        if (started || !inView || document.hidden || document.documentElement.dataset.motion === 'reduced') return;
+        started = true;
+        entrance.disconnect();
+        window.removeEventListener('motionchange', schedule);
+        document.removeEventListener('visibilitychange', schedule);
+        void start();
+    };
+    const schedule = () => {
+        if (started || scheduled || !inView || document.hidden || document.documentElement.dataset.motion === 'reduced') return;
+        scheduled = true;
+        if ('requestIdleCallback' in window) window.requestIdleCallback(launch, {timeout: 1000});
+        else setTimeout(launch, 150);
+    };
+    const entrance = new IntersectionObserver(entries => { inView = entries[0].isIntersecting; schedule(); });
+    entrance.observe(host);
+    window.addEventListener('motionchange', schedule);
+    document.addEventListener('visibilitychange', schedule);
 }

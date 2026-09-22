@@ -9,6 +9,7 @@ export const games:Entry[]=[
 {slug:'puzzle',title:'Sliding Space',category:'Strategy',description:'Everything has a place. Find its way home.',icon:'▦',modes:['3×3 numbers','4×4 numbers','3×3 gradient','4×4 gradient']},
 {slug:'life',title:'Game of Life',category:'Sandbox',description:'Draw a seed. Watch a world emerge.',icon:'⠿',modes:['Fixed edges','Wraparound']}];
 export const utilities:Entry[]=[
+{slug:'diff',title:'Text Compare',category:'Developer',description:'See what changed, one line at a time.',icon:'+-',modes:[]},
 {slug:'timer',title:'Focus Timer',category:'Everyday',description:'A little structure for your next stretch of focus.',icon:'◷',modes:[]},
 {slug:'json',title:'JSON Studio',category:'Developer',description:'Format, compact, and make sense of your data.',icon:'{}',modes:[]},
 {slug:'text',title:'Word Counter',category:'Everyday',description:'See the shape of your words, in any language.',icon:'Aa',modes:[]},

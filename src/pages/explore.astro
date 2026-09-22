@@ -1,0 +1,6 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Discover from '../components/Discover.astro';
+import { exploreHub } from '../data/explore';
+---
+<Layout title="Explore" description={exploreHub.description}><Discover kind="explore"/></Layout>

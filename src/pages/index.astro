@@ -1,6 +1,9 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { games, utilities, visuals } from '../data/catalog';
 import ProjectArt from '../components/ProjectArt.astro';
+import { hubs, bookmarks, type Hub } from '../data/discover';
+import '../styles/discover.css';
 ---
 <Layout home>
   <section class="hero wrap">
@@ -9,7 +12,7 @@ import ProjectArt from '../components/ProjectArt.astro';
       <h1>A little corner<br />of the <span class="serif-word">internet.</span></h1>
       <p>A place to build, explore, and occasionally<br class="desktop-break" /> get wonderfully distracted.</p>
       <div class="hero-actions"><a class="button primary magnetic" href="/visuals/">Explore the playground <span>↗</span></a><a class="text-link" href="/about/">A bit about me <span>↗</span></a></div>
-      <div class="home-counts"><span><strong>12</strong> visual studies</span><span><strong>8</strong> games</span><span><strong>10</strong> tools</span></div>
+      <div class="home-counts"><span><strong>{visuals.length}</strong> visual studies</span><span><strong>{games.length}</strong> games</span><span><strong>{utilities.length}</strong> tools</span></div>
       <div class="hero-note"><span class="fine-line"></span> PERSONAL SPACE · ALWAYS EVOLVING</div>
     </div>
     <div class="hero-art" id="orbit-scene" aria-label="An animated field of particles orbiting a luminous core" role="img"><div class="orbit-fallback"><div></div><i></i><b></b></div><span class="scene-label label-top">FIG. 001 — ORBITAL FIELD</span><span class="scene-label label-bottom">A LITTLE CHAOS. A LITTLE GRAVITY.</span><span class="scene-coordinate">23.5°<br />∞ POSSIBILITIES</span><a class="home-scene-link" href="/visuals/orbit/">Enter the orbital field ↗</a></div>
@@ -23,6 +26,11 @@ import ProjectArt from '../components/ProjectArt.astro';
       <a class="destination play-destination tilt-card reveal" href="/play/"><div class="card-top"><span class="card-index">03 / PLAY</span><span class="round-arrow">↗</span></div><ProjectArt kind="arcade"/><div class="destination-copy"><h3>Take a small detour</h3><p>Your next high score is waiting.</p><span class="card-link">Enter the arcade <span>↗</span></span></div></a>
       <a class="about-strip reveal" href="/about/"><span class="about-mark">o.</span><div><span class="card-index">04 / HUMAN</span><h3>There's a person behind the pixels.</h3></div><span class="text-link">Meet ortunate <span>↗</span></span></a>
     </div>
+  </section>
+  <section class="home-discovery wrap">
+    <form class="home-search" action="/explore/" role="search"><label for="home-search">Find your next orbit<span>Tools, games, visual studies, and the open internet.</span></label><div><input id="home-search" type="search" name="q" placeholder="Try JSON, science, or color…"/><button class="button primary" type="submit">Explore →</button></div></form>
+    <div class="section-heading"><div><div class="eyebrow">BEYOND THIS ORBIT</div><h2>The internet is still interesting<span class="muted">.</span></h2></div><span class="section-aside">Read. Follow. Find something new.</span></div>
+    <div class="home-hub-grid">{Object.entries(hubs).map(([key, hub]) => <a class="home-hub" href={`/${key}/`}><div class="home-hub-top"><span class="card-index">{hub.verb} / {bookmarks[key as Hub].length} DESTINATIONS</span><span class="home-hub-glyph" aria-hidden="true">{hub.glyph}</span></div><h3>{hub.title}</h3><p>{hub.description}</p><span class="collection-link">Explore {hub.title.toLowerCase()} <span>↗</span></span></a>)}</div>
   </section>
   <script>import '../scripts/scene';</script>
 </Layout>

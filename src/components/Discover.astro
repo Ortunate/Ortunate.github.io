@@ -1,0 +1,47 @@
+---
+import { bookmarks, hubs, type Hub } from '../data/discover';
+import '../styles/discover.css';
+import { exploreHub, exploreEntries } from '../data/explore';
+import { utilities } from '../data/catalog';
+import Workbench from './Workbench.astro';
+import Watchlist from './Watchlist.astro';
+import NewsFeed from './NewsFeed.astro';
+interface Props { kind: Hub | 'explore' }
+const {kind} = Astro.props;
+const hub = kind === 'explore' ? exploreHub : hubs[kind];
+const entries = kind === 'explore' ? exploreEntries : bookmarks[kind];
+const categories = ['All', ...new Set(entries.map(entry => entry.category))];
+---
+<section class="page-section wrap discovery" data-directory>
+  <div class="eyebrow">THE OPEN INTERNET / {hub.verb}</div>
+  <div class="discovery-heading"><div class="page-heading"><h1>{hub.heading}</h1><p>{hub.description}</p></div><span class="discovery-emblem" aria-hidden="true">{hub.glyph}</span></div>
+  <nav class="hub-tabs" aria-label="Explore hubs">{Object.entries({explore: exploreHub, ...hubs}).map(([key, value]) => <a href={`/${key}/`} aria-current={key === kind ? 'page' : undefined}>{value.title}<span>↗</span></a>)}</nav>
+  {kind === 'markets' && <div class="market-desk">
+    <div><div class="eyebrow">THE RESEARCH DESK</div><h2>Start with a symbol.</h2><p>Look up a company or ticker on Yahoo Finance.</p></div>
+    <form action="https://finance.yahoo.com/lookup/" method="get" target="_blank" {...{rel: "noopener noreferrer"}}><label for="market-symbol">Company or symbol</label><div class="lookup-row"><input id="market-symbol" name="s" type="search" required maxlength="80" placeholder="AAPL, 0700.HK, 600519.SS…"/><button class="button primary" type="submit">Look up ↗</button></div></form>
+    <div class="market-shortcuts"><span>QUICK LOOK</span>{[['S&P 500','%5EGSPC'],['Nasdaq','%5EIXIC'],['Hang Seng','%5EHSI'],['Shanghai','000001.SS']].map(([name,symbol]) => <a href={`https://finance.yahoo.com/quote/${symbol}/`} target="_blank" rel="noopener noreferrer">{name} ↗</a>)}</div>
+    <p class="market-note">Quotes and charts open at the source; prices may be delayed. This is a research directory, not investment advice.</p>
+  </div>}
+  {kind === 'markets' && <Watchlist/>}
+  {kind === 'news' && <NewsFeed/>}
+  {kind === 'news' && <div class="directory-note"><span aria-hidden="true">◎</span><p>A reading shelf, refreshed by the publishers. Open a source for its latest stories; some articles require a subscription.</p></div>}
+  {kind === 'launchpad' && <div class="directory-note"><span aria-hidden="true">⌁</span><p>Looking for something quick? Our <a href="/tools/">{utilities.length} built-in tools →</a> work right here. Explore more independent tools and curious corners below.</p></div>}
+  {kind === 'explore' && <div class="explore-shortcuts" aria-label="Starting points"><span>START SOMEWHERE</span><a href="/explore/?category=Tools">Get something done →</a><a href="/explore/?category=Games">Take a break →</a><a href="/explore/?category=Launchpad&q=wander">Wander a little →</a><a href="/explore/?saved=1">My saved places ☆</a></div>}
+  {kind === 'explore' && <Workbench/>}
+  <div class="directory-controls" hidden data-enhanced>
+    <label class="directory-search"><span class="sr-only">Search {hub.title}</span><input type="search" data-search placeholder="Search names, categories, or ideas…"/></label>
+    <button class="button" type="button" data-saved-only aria-pressed="false">☆ Saved only</button>
+    <button class="button" type="button" data-surprise>Surprise me ↗</button>
+  </div>
+  <div class="filter-row directory-filters" aria-label="Categories" hidden data-enhanced>{categories.map(category => <button type="button" class="filter-button" data-category-filter={category} aria-pressed={category === 'All'}>{category}</button>)}</div>
+  <div class="directory-meta"><p role="status" aria-live="polite" data-count>{entries.length} places to explore</p><span>{kind === 'explore' ? 'BUILT HERE + OUT THERE' : 'EXTERNAL LINKS ↗'}</span></div>
+  <div class="directory-grid">{entries.map((entry, index) => <article class="directory-card" data-entry data-bookmark={entry.id} data-category={entry.category} data-search-text={`${entry.title} ${entry.description} ${entry.category} ${entry.badge} ${entry.keywords || ''}`.toLowerCase()}>
+    <div class="directory-card-top"><span class="directory-monogram" aria-hidden="true" style={`--tile-hue:${kind === 'news' ? 255 + index * 6 : kind === 'markets' ? 120 + index * 7 : 25 + index * 23}`}>{entry.title.slice(0,2)}</span><span class="card-index">{entry.category}</span><button type="button" class="bookmark-button" data-save hidden aria-label={`Save ${entry.title}`} aria-pressed="false" data-title={entry.title}>☆</button></div>
+    <a class="directory-main-link" data-track-entry={entry.id} href={entry.url} target={entry.url.startsWith('/') ? undefined : '_blank'} rel={entry.url.startsWith('/') ? undefined : 'noopener noreferrer'}><h2>{entry.title}<span aria-hidden="true">{entry.url.startsWith('/') ? '→' : '↗'}</span></h2><p>{entry.description}</p><span class="directory-domain">{entry.url.startsWith('/') ? 'ortunate / made here' : new URL(entry.url).hostname.replace(/^www\./,'')}</span></a>
+    <div class="directory-card-bottom"><span>{entry.badge}</span><span>{entry.url.startsWith('/') ? 'OPEN EXPERIENCE →' : 'OPEN WEBSITE ↗'}</span></div>
+  </article>)}</div>
+  <div class="directory-empty" data-directory-empty hidden><h2>No detours here. Yet.</h2><p>Try another search or category, or save a few favorites first.</p><button type="button" class="button" data-reset>Reset filters</button></div>
+  <p class="directory-storage" data-storage-note hidden>Saved links stay in this browser. External websites may have their own accounts or paid features.</p>
+  <noscript><p class="directory-storage">All links work without JavaScript. Enable it to search, filter, or save favorites.</p></noscript>
+</section>
+<script>import '../scripts/discover';</script>

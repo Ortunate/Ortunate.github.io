@@ -1,0 +1,20 @@
+---
+import { marketOptions } from '../lib/watchlist';
+---
+<section class="watchlist" data-watchlist hidden aria-labelledby="watchlist-heading">
+  <div class="workbench-heading"><div><div class="eyebrow">YOUR MARKET NOTEBOOK</div><h2 id="watchlist-heading">Keep a few names in view.</h2></div><span class="small-note" data-watch-count></span></div>
+  <p class="watch-intro">Save up to 40 stock or ETF symbols with a short research note. Quotes and news open on Yahoo Finance; symbols are not verified here.</p>
+  <form data-watch-form class="watch-form">
+    <label>Market<select name="market">{Object.entries(marketOptions).map(([value,label]) => <option value={value}>{label}</option>)}</select></label>
+    <label>Symbol<input name="symbol" type="text" required maxlength="16" placeholder="AAPL" autocomplete="off" spellcheck="false" aria-describedby="watch-symbol-help"/></label>
+    <label>Display name <span>(optional)</span><input name="name" type="text" maxlength="60" placeholder="A name you recognize"/></label>
+    <label class="watch-note-field">Research note <span>(optional)</span><input name="note" type="text" maxlength="200" placeholder="What would you like to learn?"/></label>
+    <div class="watch-form-actions"><button class="button primary" type="submit" data-watch-submit>Add symbol +</button><button class="button" type="button" data-watch-cancel hidden>Cancel edit</button></div>
+    <p id="watch-symbol-help" class="watch-help">US tickers, e.g. AAPL or BRK-B. Choose the listing market first.</p>
+  </form>
+  <div class="watch-toolbar"><label>Show market<select data-watch-filter><option value="All">All markets</option>{Object.entries(marketOptions).map(([value,label]) => <option value={value}>{label}</option>)}</select></label><span>RESEARCH LINKS ↗</span></div>
+  <ul class="watch-items" data-watch-items></ul>
+  <p class="watch-empty" data-watch-empty>Your list is a blank canvas. Add your first symbol above.</p>
+  <div class="watch-feedback"><p role="status" aria-live="polite" data-watch-status>Stored in this browser. Notes stay here when you open a research link.</p><button class="button" type="button" data-watch-undo hidden>Undo removal</button></div>
+</section>
+<script>import '../scripts/watchlist';</script>

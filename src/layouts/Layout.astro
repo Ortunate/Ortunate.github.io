@@ -5,7 +5,7 @@ import { profile } from '../data/site';
 interface Props { title?: string; description?: string; home?: boolean }
 const { title = 'A little corner of the internet', description = profile.intro, home = false } = Astro.props;
 const path = Astro.url.pathname;
-const links = [['Home','/'],['Visuals','/visuals/'],['Tools','/tools/'],['Play','/play/'],['About','/about/']];
+const links = [['Home','/'],['Visuals','/visuals/'],['Tools','/tools/'],['Play','/play/'],['Explore','/explore/'],['About','/about/']];
 ---
 <!doctype html>
 <html lang="en">
@@ -28,7 +28,7 @@ const links = [['Home','/'],['Visuals','/visuals/'],['Tools','/tools/'],['Play',
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header wrap">
       <a href="/" class="brand" aria-label="ortunate home"><img src="/favicon.svg" alt="" width="33" height="33" />ortunate<span class="brand-period">.</span></a>
-      <nav aria-label="Main navigation">{links.map(([label, href]) => <a href={href} aria-current={(href === '/' ? path === href : path.startsWith(href)) ? 'page' : undefined}>{label}</a>)}</nav>
+      <nav aria-label="Main navigation">{links.map(([label, href]) => <a href={href} aria-current={(href === '/' ? path === href : (path.startsWith(href) || (href === '/explore/' && ['/news/', '/markets/', '/launchpad/'].includes(path)))) ? 'page' : undefined}>{label}</a>)}</nav>
       <a class="header-github" href={profile.github} target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a>
     </header>
     <main id="main"><slot /></main>

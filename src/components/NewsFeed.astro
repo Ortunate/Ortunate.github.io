@@ -1,0 +1,14 @@
+---
+import { feeds } from '../lib/news';
+---
+<section class="news-feed" data-news-feed aria-labelledby="news-feed-heading">
+  <div class="workbench-heading"><div><div class="eyebrow">FROM THE HACKER NEWS COMMUNITY</div><h2 id="news-feed-heading">A little signal.</h2></div><a class="text-link" href="https://news.ycombinator.com/" target="_blank" rel="noopener noreferrer">Read on Hacker News ↗</a></div>
+  <p class="news-intro">Technology, independent projects, and ideas worth a closer look. Headlines link to their publishers; conversations live on Hacker News.</p>
+  <div class="news-controls" data-news-controls hidden><div class="filter-row" aria-label="News feeds">{Object.entries({...feeds, saved: 'Read later'}).map(([value,label]) => <button type="button" class="filter-button" data-news-kind={value} aria-pressed={value === 'top'}>{label}</button>)}</div><button class="button" type="button" data-news-refresh>Refresh ↻</button></div>
+  <div class="reading-controls" data-reading-controls hidden><label class="reading-search"><span class="sr-only">Search loaded stories by title or website</span><input type="search" data-reading-search placeholder="Search these stories…"/></label><label><input type="checkbox" data-reading-unread/> Unread only</label><span data-reading-count></span></div>
+  <p class="news-status" role="status" aria-live="polite" data-reading-status hidden>Save up to 50 headlines in this browser. Mark stories read when you finish; article text is not saved.</p>
+  <p class="news-status" role="status" aria-live="polite" data-news-status>Enable JavaScript to load headlines here, or visit the source above.</p>
+  <ol class="news-stories" data-news-stories></ol>
+  <p class="news-credit">Via the <a href="https://github.com/HackerNews/API" target="_blank" rel="noopener noreferrer">official Hacker News API ↗</a>. Cached in this browser for 10 minutes. Publication times are shown in your local time.</p>
+</section>
+<script>import '../scripts/news';</script>

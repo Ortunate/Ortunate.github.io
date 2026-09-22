@@ -3,7 +3,7 @@ import { resolve, join, extname } from 'node:path';
 import assert from 'node:assert/strict';
 import { games, utilities, visuals } from '../src/data/catalog.ts';
 const root = resolve('dist');
-const routes = ['index.html','projects/index.html','tools/index.html','play/index.html','visuals/index.html','about/index.html','404.html',...games.map(e=>`play/${e.slug}/index.html`),...utilities.map(e=>`tools/${e.slug}/index.html`),...visuals.map(e=>`visuals/${e.slug}/index.html`)];
+const routes = ['index.html','projects/index.html','tools/index.html','play/index.html','visuals/index.html','explore/index.html','news/index.html','markets/index.html','launchpad/index.html','about/index.html','404.html',...games.map(e=>`play/${e.slug}/index.html`),...utilities.map(e=>`tools/${e.slug}/index.html`),...visuals.map(e=>`visuals/${e.slug}/index.html`)];
 for (const route of routes) assert.ok(existsSync(join(root,route)), `Missing page: ${route}`);
 let checked = 0;
 function walk(directory) {
