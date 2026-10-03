@@ -1,0 +1,8 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Discover from '../components/Discover.astro';
+import { hubs, type Hub } from '../data/discover';
+export function getStaticPaths() { return Object.keys(hubs).map(hub => ({params:{hub}})); }
+const kind = Astro.params.hub as Hub;
+---
+<Layout title={hubs[kind].title} description={hubs[kind].description}><Discover kind={kind}/></Layout>

@@ -1,4 +1,5 @@
 import { notify } from './storage';
+import './recent';
 const motionButton = document.querySelector<HTMLButtonElement>('#motion-toggle');
 const root = document.documentElement;
 function updateMotion() {

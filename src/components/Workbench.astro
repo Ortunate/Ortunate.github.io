@@ -1,0 +1,12 @@
+---
+---
+<section class="workbench" data-workbench hidden aria-labelledby="workbench-heading">
+  <div class="workbench-heading"><div><div class="eyebrow">YOUR OWN LITTLE ORBIT</div><h2 id="workbench-heading">Pick up where you left off.</h2></div><a class="text-link" href="/explore/?saved=1">All saved places →</a></div>
+  <div class="workbench-grid">
+    <section aria-labelledby="pinned-heading"><h3 id="pinned-heading">Pinned <span>Up to six favorites</span></h3><ul data-pinned-list></ul><p data-pinned-empty>Save a place below, then pin it here for a quicker return.</p></section>
+    <section aria-labelledby="recent-heading"><div class="recent-heading"><h3 id="recent-heading">Recently opened</h3><button type="button" class="text-link" data-clear-recent>Clear</button></div><ul data-recent-list></ul><p data-recent-empty>Your next few detours will appear here.</p></section>
+  </div>
+  <details class="workbench-manage"><summary>Manage saved places &amp; backups <span data-saved-total></span></summary><div class="workbench-backup"><button class="button" type="button" data-export>Export bookmarks ↓</button><label class="button">Import &amp; merge ↑<input class="sr-only" type="file" accept="application/json,.json" data-import/></label><p>Imports merge with your collection. Backups include saved and pinned places; recent activity stays here.</p></div><ul class="saved-manager" data-saved-list></ul><p data-saved-empty>Use the ☆ buttons below to start your collection.</p></details>
+  <p class="workbench-status" role="status" aria-live="polite" data-workbench-status>Your collection stays in this browser.</p>
+</section>
+<script>import '../scripts/workbench';</script>

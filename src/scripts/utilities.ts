@@ -1,4 +1,5 @@
 import { createResultState } from '../lib/result-state';
+import { transferKey } from '../lib/tool-transfer';
 import { copy, read, save } from './storage';
 import { textStats } from '../lib/text';
 import { defaultTimer, validTimer, secondsLeft, startTimer, pauseTimer } from '../lib/timer';
@@ -13,6 +14,8 @@ let worker: Worker | undefined, timeout = 0;
 const formats: Record<string, string> = {};
 function output(text: string) {
     resultState.accept(text);
+    const compare = root.querySelector<HTMLButtonElement>('[data-send-diff]');
+    if (compare) compare.disabled = !text;
     const button = root.querySelector<HTMLButtonElement>('[data-action=copy]');
     if (button)
         button.disabled = slug === 'text' ? !input() : !text;
@@ -20,6 +23,18 @@ function output(text: string) {
         $('utility-output').textContent = text || 'Your result will appear here.';
 }
 function error(e: unknown) { output(''); root.querySelectorAll<HTMLButtonElement>('[data-copy-format]').forEach(b => b.disabled = true); status.textContent = e instanceof Error ? e.message : String(e); status.style.color = '#f4b2bd'; }
+root.querySelector('[data-send-diff]')?.addEventListener('click', () => {
+    const after = resultState.text;
+    if (!after) return;
+    if (input().length > 100_000 || after.length > 100_000) {
+        status.textContent = 'Text Compare accepts at most 100,000 characters per side.';
+        return;
+    }
+    try {
+        sessionStorage.setItem(transferKey, JSON.stringify({before: input(), after, createdAt: Date.now()}));
+        location.assign('/tools/diff/');
+    } catch { status.textContent = 'Automatic transfer is unavailable. Copy your result and paste it into Text Compare.'; }
+});
 function ok(message = 'Ready. Everything stays on this device.') { status.textContent = message; status.style.color = ''; }
 function limited() {
     if (input().length > 2000000)

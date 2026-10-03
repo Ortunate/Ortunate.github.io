@@ -1,0 +1,50 @@
+export type Hub = 'news' | 'markets' | 'launchpad';
+export interface Bookmark { id: string; title: string; url: string; category: string; description: string; badge: string; keywords?: string }
+export const hubs: Record<Hub, {title: string; verb: string; heading: string; description: string; glyph: string}> = {
+  news: {title:'News', verb:'READ', heading:'A wider window.', description:'Fresh perspectives, thoughtful reads, and a little signal in the noise.', glyph:'N°'},
+  markets: {title:'Markets', verb:'FOLLOW', heading:'Watch the world move.', description:'A desk for market research. From Wall Street to Hong Kong and beyond.', glyph:'↗'},
+  launchpad: {title:'Launchpad', verb:'DISCOVER', heading:'Your next useful detour.', description:'Good tools, creative corners, and wonderfully unexpected places.', glyph:'⌘'},
+};
+export const bookmarks: Record<Hub, Bookmark[]> = {
+  news: [
+    {id:'hn',title:'Hacker News',url:'https://news.ycombinator.com/',category:'Technology',description:'Ideas, engineering, startups, and the conversations around them.',badge:'Community'},
+    {id:'verge',title:'The Verge',url:'https://www.theverge.com/',category:'Technology',description:'Technology at the intersection of culture, science, and everyday life.',badge:'English'},
+    {id:'ars',title:'Ars Technica',url:'https://arstechnica.com/',category:'Technology',description:'Longer looks at computing, science, and the systems behind the headlines.',badge:'English'},
+    {id:'bbc',title:'BBC News',url:'https://www.bbc.com/news',category:'World',description:'A window onto world events, reporting, and explainers.',badge:'English'},
+    {id:'reuters',title:'Reuters',url:'https://www.reuters.com/',category:'World',description:'Global reporting across business, politics, and world affairs.',badge:'English'},
+    {id:'rthk',title:'RTHK 香港電台',url:'https://news.rthk.hk/',category:'Chinese',description:'Hong Kong, Greater China, and international news.',badge:'中文 / English'},
+    {id:'sspai',title:'少数派 · SSPAI',url:'https://sspai.com/',category:'Chinese',description:'Digital life, thoughtful workflows, apps, and personal experiments.',badge:'中文'},
+    {id:'36kr',title:'36氪 · 36Kr',url:'https://36kr.com/',category:'Chinese',description:'Chinese technology, startups, and business stories.',badge:'中文'},
+    {id:'nasa',title:'NASA Science',url:'https://science.nasa.gov/',category:'Science',description:'New discoveries, space missions, and the universe outside our window.',badge:'Space'},
+    {id:'nature',title:'Nature',url:'https://www.nature.com/news',category:'Science',description:'Research news and perspectives from across the sciences.',badge:'Research'},
+  ],
+  markets: [
+    {id:'tradingview',title:'TradingView',url:'https://www.tradingview.com/markets/',category:'Global',description:'Explore markets, charts, and the wider financial landscape.',badge:'Charts'},
+    {id:'yahoo',title:'Yahoo Finance',url:'https://finance.yahoo.com/',category:'Global',description:'Company research, market coverage, and symbol lookup.',badge:'Research'},
+    {id:'finviz',title:'Finviz',url:'https://finviz.com/map.ashx',category:'US',description:'Explore the US stock market through a sector heatmap.',badge:'Heatmap'},
+    {id:'nasdaq',title:'Nasdaq',url:'https://www.nasdaq.com/market-activity',category:'US',description:'Stocks, indices, and market activity from Nasdaq.',badge:'Exchange'},
+    {id:'hkex',title:'HKEX',url:'https://www.hkex.com.hk/?sc_lang=en',category:'Hong Kong',description:'Hong Kong exchange information, securities, and announcements.',badge:'Exchange'},
+    {id:'aastocks',title:'AASTOCKS',url:'https://www.aastocks.com/',category:'Hong Kong',description:'Hong Kong equities, market news, and company information.',badge:'中文 / English'},
+    {id:'eastmoney',title:'东方财富 · Eastmoney',url:'https://www.eastmoney.com/',category:'Mainland China',description:'Mainland Chinese markets, company coverage, and financial news.',badge:'中文'},
+    {id:'sse',title:'Shanghai Stock Exchange',url:'https://english.sse.com.cn/',category:'Mainland China',description:'Official exchange information and listed-company resources.',badge:'Exchange'},
+    {id:'fred',title:'FRED',url:'https://fred.stlouisfed.org/',category:'Economy',description:'Explore economic time series from the Federal Reserve Bank of St. Louis.',badge:'Data'},
+    {id:'calendar',title:'Economic Calendar',url:'https://www.tradingview.com/economic-calendar/',category:'Economy',description:'Follow scheduled economic releases and their reported results.',badge:'Calendar'},
+  ],
+  launchpad: [
+    {id:'squoosh',title:'Squoosh',url:'https://squoosh.app/',category:'Creative',description:'Make images smaller and compare the result side by side.',badge:'Images'},
+    {id:'photopea',title:'Photopea',url:'https://www.photopea.com/',category:'Creative',description:'An image editor in your browser, ready for your next visual idea.',badge:'Editor'},
+    {id:'excalidraw',title:'Excalidraw',url:'https://excalidraw.com/',category:'Creative',description:'Sketch a diagram, explain a thought, or draw something together.',badge:'Whiteboard'},
+    {id:'coolors',title:'Coolors',url:'https://coolors.co/',category:'Creative',description:'Explore color palettes and find a new starting point.',badge:'Color'},
+    {id:'regex101',title:'regex101',url:'https://regex101.com/',category:'Developer',description:'Build expressions with explanations, matches, and debugging tools.',badge:'Regex'},
+    {id:'caniuse',title:'Can I use',url:'https://caniuse.com/',category:'Developer',description:'Look up browser support before shipping a web feature.',badge:'Reference'},
+    {id:'codepen',title:'CodePen',url:'https://codepen.io/',category:'Developer',description:'Explore and experiment with front-end ideas in the browser.',badge:'Playground'},
+    {id:'diffchecker',title:'Diffchecker',url:'https://www.diffchecker.com/',category:'Everyday',description:'Compare two pieces of text and see what changed.',badge:'Compare'},
+    {id:'timeanddate',title:'Time and Date',url:'https://www.timeanddate.com/',category:'Everyday',description:'World clocks, calendars, and time-zone planning.',badge:'Time'},
+    {id:'wolfram',title:'WolframAlpha',url:'https://www.wolframalpha.com/',category:'Learning',description:'Explore calculations, mathematics, and computational knowledge.',badge:'Compute'},
+    {id:'desmos',title:'Desmos',url:'https://www.desmos.com/calculator',category:'Learning',description:'Turn equations into graphs and explore how they change.',badge:'Math'},
+    {id:'earth',title:'Earth Nullschool',url:'https://earth.nullschool.net/',category:'Wander',description:'Explore a moving globe of wind, weather, and ocean patterns.',badge:'Planet'},
+    {id:'neal',title:'Neal.fun',url:'https://neal.fun/',category:'Wander',description:'Playful experiments for a beautifully unproductive few minutes.',badge:'Fun'},
+    {id:'radio',title:'Radio Garden',url:'https://radio.garden/',category:'Wander',description:'Spin the globe and discover radio stations around the world.',badge:'Listen'},
+    {id:'window',title:'WindowSwap',url:'https://www.window-swap.com/',category:'Wander',description:'Take a quiet look through somebody else’s window.',badge:'Slow down'},
+  ],
+};

@@ -1,0 +1,20 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import '../../styles/diff.css';
+---
+<Layout title="Text Compare" description="See what changed. A private, line-by-line text comparison.">
+  <section class="page-section wrap workspace-tools" data-diff>
+    <div class="detail-heading"><div><a class="back-link" href="/tools/">← Back to the toolbox</a><h1>Text Compare</h1><p>Two versions. A clearer picture of what changed.</p></div><span class="privacy-label">ONLY IN YOUR BROWSER</span></div>
+    <div class="utility-surface">
+      <div class="diff-editors"><label>Before<textarea data-diff-before spellcheck="false" maxlength="100000" placeholder="Paste the original text…"></textarea></label><label>After<textarea data-diff-after spellcheck="false" maxlength="100000" placeholder="Paste the revised text…"></textarea></label></div>
+      <div class="check-row"><label><input data-diff-trim type="checkbox"/>Ignore leading and trailing whitespace</label><label><input data-diff-changes type="checkbox"/>Show changes only</label></div>
+      <div class="action-row"><button class="button primary" type="button" data-diff-run>Compare text</button><button class="button" type="button" data-diff-swap>Swap ⇄</button><button class="button" type="button" data-diff-example>Try an example</button><button class="button" type="button" data-diff-clear>Clear</button><button class="button" type="button" data-diff-copy disabled>Copy comparison</button></div>
+      <p class="work-status" role="status" aria-live="polite" data-diff-status>Up to 1,000 lines and 100,000 characters per side. Text is not uploaded.</p>
+      <div class="diff-result" data-diff-result hidden><div class="diff-legend"><span>− Removed</span><span>+ Added</span><span>Before / After line numbers</span></div><div class="diff-lines" data-diff-lines role="region" aria-label="Line comparison" tabindex="0"></div></div>
+      <p class="help-text">Line endings are normalized. A final newline counts as an empty line. Copy includes all compared lines, even when unchanged lines are hidden.</p>
+      <div class="diff-related"><span>CONTINUE EXPLORING</span><a href="/tools/json/">JSON Studio →</a><a href="/tools/text/">Word Counter →</a><a href="/tools/encoding/">Encode / Decode →</a></div>
+      <noscript><p class="work-status">Enable JavaScript to compare text locally.</p></noscript>
+    </div>
+  </section>
+  <script>import '../../scripts/diff';</script>
+</Layout>

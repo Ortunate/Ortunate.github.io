@@ -3,4 +3,4 @@ import Layout from '../layouts/Layout.astro';
 import Collection from '../components/Collection.astro';
 import {utilities} from '../data/catalog';
 ---
-<Layout title="Tools"><Collection entries={utilities} kind="tools" heading="Less friction. More flow" subtitle="Ten small tools. No account. Just you and the task."/><script>const legacy=location.hash.slice(1);if(['timer','json','text'].includes(legacy))location.replace(`/tools/${legacy}/`);</script></Layout>
+<Layout title="Tools"><Collection entries={utilities} kind="tools" heading="Less friction. More flow" subtitle={`${utilities.length} small tools. No account. Just you and the task.`}/><script>const legacy=location.hash.slice(1);if(['timer','json','text'].includes(legacy))location.replace(`/tools/${legacy}/`);</script></Layout>
