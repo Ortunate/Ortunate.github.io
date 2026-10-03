@@ -28,6 +28,7 @@ const budgets = {
   'tools/json/index.html': 25,
   'tools/diff/index.html': 12,
   'visuals/index.html': 45,
+  'studio/living-canvas/index.html': 40,
 };
 for (const [route, kib] of Object.entries(budgets)) {
   const html = readFileSync(resolve(root, route), 'utf8');

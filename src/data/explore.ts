@@ -8,6 +8,12 @@ export const exploreHub = {
 
 // Reuse the source catalogs so new entries appear here automatically.
 export const exploreEntries: Bookmark[] = [
+  {id:'studio:living-canvas',title:'Living Canvas',url:'/studio/living-canvas/',category:'Create',description:'Grow a texture, freeze a detail, and sculpt a work of your own.',badge:'Material studio',keywords:'generative art mineral glaze painting freeze'},
+  ...[
+    ['reaction','Growth textures','Gray–Scott reaction–diffusion experiments'],
+    ['sand','Sand ecology','A cellular material sandbox'],
+    ['lenia','Lenia culture','Continuous cellular life and Orbium'],
+  ].map(([slug,title,description])=>({id:`lab:${slug}`,title,url:`/lab/${slug}/`,category:'Lab',description,badge:'Experiment',keywords:'simulation compare parameters scan'})),
   ...[{entries: utilities, path: 'tools', category: 'Tools'}, {entries: games, path: 'play', category: 'Games'}, {entries: visuals, path: 'visuals', category: 'Visuals'}].flatMap(({entries, path, category}) =>
     entries.map(entry => ({id: `${path}:${entry.slug}`, title: entry.title, url: `/${path}/${entry.slug}/`, category, description: entry.description, badge: entry.category, keywords: entry.modes.join(' ')}))),
   ...Object.entries(bookmarks).flatMap(([key, entries]) => entries.map(entry => ({...entry, category: hubs[key as keyof typeof hubs].title, keywords: `${entry.category} ${entry.badge}`}))),

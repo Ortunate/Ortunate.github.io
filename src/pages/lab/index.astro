@@ -8,6 +8,7 @@ import '../../styles/lab.css';
     <div class="eyebrow">A FIELD GUIDE TO EMERGENCE</div>
     <h1>Small worlds.<br/><span class="serif-word">Open questions.</span></h1>
     <p class="lab-intro">Not just something to watch. Something to change.<br/>Seed a world, test a hunch, follow the evidence.</p>
+    <a class="lab-home-entry" href="/studio/living-canvas/"><div><span class="card-index">NEW / MATERIAL STUDIO</span><h3>Grow a work of your own.</h3><p>Plant a texture. Freeze a detail. Shape its light.</p></div><span>Open Living Canvas ↗</span></a>
     <div class="lab-cards">{Object.entries(models).map(([id,model])=><a class="lab-card" href={`/lab/${id}/`}>
       <div class="lab-preview"><canvas data-lab-preview={id} width="128" height="128" aria-label={`${model.title} simulation preview`}></canvas><span class="lab-preview-note">LIVE SPECIMEN <i></i></span><span class="lab-card-arrow">↗</span></div>
       <div class="lab-card-copy"><span class="eyebrow">{model.tag}</span><h2>{model.title}</h2><p>{model.description}</p><span class="lab-card-link">Open workbench <span>→</span></span></div>

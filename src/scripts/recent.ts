@@ -7,7 +7,7 @@ function record(id: string) {
   } catch { /* Browsing still works when storage is unavailable. */ }
 }
 // Local detail pages also count when reached through bookmarks or a direct URL.
-const detail = location.pathname.match(/^\/(tools|play|visuals)\/([^/]+)\/?$/);
+const detail = location.pathname.match(/^\/(tools|play|visuals|lab|studio)\/([^/]+)\/?$/);
 if (detail) record(`${detail[1]}:${detail[2]}`);
 function track(event: MouseEvent) {
   if (event.type === 'auxclick' && event.button !== 1) return;
