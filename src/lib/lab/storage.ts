@@ -1,0 +1,10 @@
+import { validateExperiment, type Experiment } from './session.ts';
+export interface SavedExperiment { id: string; name: string; model: string; updated: number; experiment: Experiment }
+async function database(): Promise<IDBDatabase> {
+  if (typeof indexedDB === 'undefined') throw new Error('Local storage is unavailable. Export a .lab.json file instead.');
+  return new Promise((resolve, reject) => { const request = indexedDB.open('ortunate-lab', 1); request.onupgradeneeded = () => request.result.createObjectStore('experiments', { keyPath: 'id' }); request.onsuccess = () => resolve(request.result); request.onerror = () => reject(new Error('Could not open local storage. You can still export your experiment.')); request.onblocked = () => reject(new Error('Local storage is blocked by another tab.')); });
+}
+async function transaction<T>(mode: IDBTransactionMode, operation: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> { const db = await database(); return new Promise((resolve, reject) => { const tx = db.transaction('experiments', mode); let result: T; const request = operation(tx.objectStore('experiments')); request.onsuccess = () => { result = request.result; }; tx.oncomplete = () => { db.close(); resolve(result); }; tx.onabort = tx.onerror = () => { db.close(); reject(new Error('Local save failed. Your experiment is still available; export a file to keep it.')); }; }); }
+export async function saveExperiment(name: string, experiment: Experiment) { validateExperiment(experiment); const record: SavedExperiment = { id: crypto.randomUUID(), name: name.trim().slice(0, 80) || 'Untitled experiment', model: experiment.a.model, updated: Date.now(), experiment }; await transaction('readwrite', store => store.put(record)); return record.id; }
+export async function listExperiments() { return (await transaction<SavedExperiment[]>('readonly', store => store.getAll())).sort((a, b) => b.updated - a.updated); }
+export async function deleteExperiment(id: string) { await transaction('readwrite', store => store.delete(id)); }

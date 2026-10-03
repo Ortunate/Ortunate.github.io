@@ -1,0 +1,18 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { models } from '../../lib/lab/definitions';
+import '../../styles/lab.css';
+---
+<Layout title="Lab — small worlds, real experiments" description="Three living systems. Change a rule, compare the outcomes, and keep what you discover.">
+  <section class="lab-directory wrap">
+    <div class="eyebrow">A FIELD GUIDE TO EMERGENCE</div>
+    <h1>Small worlds.<br/><span class="serif-word">Open questions.</span></h1>
+    <p class="lab-intro">Not just something to watch. Something to change.<br/>Seed a world, test a hunch, follow the evidence.</p>
+    <div class="lab-cards">{Object.entries(models).map(([id,model])=><a class="lab-card" href={`/lab/${id}/`}>
+      <div class="lab-preview"><canvas data-lab-preview={id} width="128" height="128" aria-label={`${model.title} simulation preview`}></canvas><span class="lab-preview-note">LIVE SPECIMEN <i></i></span><span class="lab-card-arrow">↗</span></div>
+      <div class="lab-card-copy"><span class="eyebrow">{model.tag}</span><h2>{model.title}</h2><p>{model.description}</p><span class="lab-card-link">Open workbench <span>→</span></span></div>
+    </a>)}</div>
+    <div class="lab-directory-note"><span>OBSERVE → PERTURB → COMPARE</span><p>Single experiments, synchronized A/B comparisons, and parameter scans. All calculations stay in your browser. Saves live on this device; export a file to take an experiment with you.</p></div>
+  </section>
+  <script>import '../../scripts/lab-preview';</script>
+</Layout>

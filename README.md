@@ -1,6 +1,6 @@
 # ortunate · Personal Space
 
-英文深空个人站，基于 Astro、TypeScript、Three.js。包含 8 款游戏、10 个工具和 12 种互动图样，所有处理都在浏览器本地完成，无需服务器或账号。
+英文深空个人站，基于 Astro、TypeScript、Three.js。包含 8 款游戏、10 个工具、12 种互动图样和 3 个科学模拟 Lab，所有处理都在浏览器本地完成，无需服务器或账号。
 
 ## 本地运行
 
@@ -14,12 +14,13 @@ npm run build
 npm run preview
 ```
 
-打开终端显示的本地地址。构建生成 37 个静态页面，输出到 `dist/`，不提交构建产物。限制文件系统环境可用 `ASTRO_TELEMETRY_DISABLED=1` 禁用 Astro 的遥测配置写入。
+打开终端显示的本地地址。构建生成 41 个静态页面，输出到 `dist/`，不提交构建产物。限制文件系统环境可用 `ASTRO_TELEMETRY_DISABLED=1` 禁用 Astro 的遥测配置写入。
 
 ## 页面与内容
 
 - `/`：保留第一版首页星球，入口调整为 Visuals、Tools、Play。
 - `/visuals/`：动态缩略展厅、分类和搜索；每种图样在 `/visuals/[slug]/` 有完整互动页。
+- `/lab/`：独立实验目录，包含 `/lab/reaction/`、`/lab/sand/`、`/lab/lenia/`。
 - `/play/`：8 款游戏的目录，每款独立页面，通过 `?mode=0`、`?mode=1` 等切换规则。
 - `/tools/`：10 个工具的目录，每个工具独立页面。
 - `/about/`：个人介绍。
@@ -74,10 +75,24 @@ Orbital Field、Ribbon Trails、Repulsion Grid、Gravity Wells、Flow Field、Ri
 - 模拟推进与绘制分离，PNG 直接导出现有帧。暂停和减少动效不推进粒子状态；波纹有生命周期和数量上限；尺寸变化保留粒子位置，非结构参数不重置场景。
 - Motion 设置遵循系统减少动效偏好，并可由页脚覆盖。WebGL 不可用时显示备用构图。
 
+### Lab 实验工作台
+
+- Growth textures：Gray–Scott 反应扩散，周期边界、零通量障碍，珊瑚/分裂/条纹预设；浓度与浮雕渲染。
+- Sand ecology：沙、水、石、木、火、蒸汽、烟七种材料；密闭边界、确定性随机规则。非精密流体或热力学模拟。
+- Lenia culture：单通道连续细胞自动机、径向多环核、Gaussian 生长函数、缓存核频谱的 FFT 卷积；Orbium/相遇/随机密度预设，密度/势场/生长率视图。Orbium 数据遵循 Bert Chan 的 MIT 许可，见 `public/licenses/lenia.txt`。
+- Run/Pause、单步、重置、种子、128²/256² 网格、笔刷、笔画撤销、内存检查点。绘画自动暂停；改变网格需要明确重建，不静默重采样。
+- A/B 从 A 的完整当前状态分支，保持相同 tick，同步推进；参数独立，笔刷可作用于 A/B/两者。复制 A→B 建立新分支点。
+- 参数扫描使用当前 A 的同一状态和 RNG，1–2 个参数，每轴 2–5 个均匀采样，最多 25 格，每格 100–10,000 步。Worker 串行执行，可取消并保留完成格。结果载入 A 后，可将同一终止 tick 的另一格替换 B 进行同步比较。
+- 指标每 10 步记录，最多保留最近 2,000 个样本；CSV 明确只导出保留区间。图表以模拟步数为横轴。
+- IndexedDB 具名本地保存，支持完整 `.lab.json`、PNG、指标 CSV、扫描摘要 CSV。文件包含格式/模型版本、当前/初始/分支状态、参数、种子、RNG、tick、视图、指标及扫描结果；导入限制 64 MB，先校验后替换。
+- 后台自动暂停，需要手动恢复。所有模拟计算在 Worker；渲染不推进状态。模型参数与网格不随性能变化，同环境同模型版本可重复，跨浏览器浮点误差可能累积。
+- 不使用浏览器自动化做视觉验收。手动检查：运行/画笔/撤销 → A/B 参数分离 → 两格扫描后逐一加载 → 导出并重新导入续跑 → 手机参数抽屉 → 切后台暂停。
+
 ## 开发入口
 
 - `src/data/catalog.ts`：游戏、工具、图样注册表及模式名称。
 - `src/data/site.ts`：昵称、简介和 GitHub 链接。
+- `src/lib/lab/`：模型定义、纯模拟引擎、FFT、会话/扫描/文件验证、Worker 调度、本地保存与数据渲染。`src/scripts/lab.ts`、`lab.worker.ts`：工作台与 Worker 入口。`tests/lab.test.ts`：数值、确定性、持久化及 Worker 回归。
 - `src/lib/visual-engine.ts`、`visual-simulation.ts`：二维图样绘制与模拟；`gpu-visual.ts`：三维交互与生命周期；`visual-webgl.ts`：渲染资源管理；`visuals/`：三个独立 GPU 场景；`motion.ts`：隧道惯性与位移积分。
 - `src/scripts/games/`：游戏控制器；`src/lib/game2048.ts`、`arcade-rules.ts`：可独立测试的规则。
 - `src/styles/collection.css`：新目录、工作区与响应式样式；`global.css` 保留第一版主题。
