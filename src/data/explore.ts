@@ -8,6 +8,7 @@ export const exploreHub = {
 
 // Reuse the source catalogs so new entries appear here automatically.
 export const exploreEntries: Bookmark[] = [
+  {id:'studio:sound-loom',title:'Sound Loom',url:'/studio/sound-loom/',category:'Create',description:'Weave six voices, explore repeating rhythms, and export a work of your own.',badge:'Sound studio',keywords:'music rhythm sequencer synthesis audio wav generative'},
   {id:'studio:living-canvas',title:'Living Canvas',url:'/studio/living-canvas/',category:'Create',description:'Grow a texture, freeze a detail, and sculpt a work of your own.',badge:'Material studio',keywords:'generative art mineral glaze painting freeze'},
   ...[
     ['reaction','Growth textures','Gray–Scott reaction–diffusion experiments'],

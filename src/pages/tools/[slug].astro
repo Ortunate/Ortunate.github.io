@@ -1,7 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import {utilities} from '../../data/catalog';
-export function getStaticPaths(){return utilities.filter(entry=>entry.slug!=='diff').map(entry=>({params:{slug:entry.slug},props:{entry}}));}
+export function getStaticPaths(){return utilities.filter(entry=>!['diff','image','color'].includes(entry.slug)).map(entry=>({params:{slug:entry.slug},props:{entry}}));}
 const {entry}=Astro.props;const slug=entry.slug;
 ---
 <Layout title={entry.title} description={entry.description}><section class="page-section wrap workspace-tools" data-utility={slug}><div class="detail-heading"><div><a class="back-link" href="/tools/">← Back to the toolbox</a><h1>{entry.title}</h1><p>{entry.description}</p></div><span class="privacy-label">ONLY IN YOUR BROWSER</span></div><div class="utility-surface">

@@ -1,5 +1,6 @@
 export interface Entry { slug:string; title:string; category:string; description:string; icon:string; modes:readonly string[] }
 export const games:Entry[]=[
+{slug:'kinetic',title:'Kinetic Workshop',category:'Sandbox',description:'Build a small machine. Make a puzzle of your own.',icon:'⚙',modes:['Challenges','Workshop']},
 {slug:'2048',title:'Cosmic 2048',category:'Strategy',description:'Slide, connect, and find a bigger possibility.',icon:'2048',modes:['Classic 4×4','Roomy 5×5','Same-number links','Doubling chain']},
 {slug:'snake',title:'Neon Snake',category:'Reflex',description:'Find your rhythm. Follow the glow.',icon:'↳',modes:['Classic','Wraparound','Obstacles']},
 {slug:'tetris',title:'Falling Blocks',category:'Arcade',description:'A little order in a falling universe.',icon:'▟',modes:['Marathon','40-line sprint']},
@@ -9,6 +10,7 @@ export const games:Entry[]=[
 {slug:'puzzle',title:'Sliding Space',category:'Strategy',description:'Everything has a place. Find its way home.',icon:'▦',modes:['3×3 numbers','4×4 numbers','3×3 gradient','4×4 gradient']},
 {slug:'life',title:'Game of Life',category:'Sandbox',description:'Draw a seed. Watch a world emerge.',icon:'⠿',modes:['Fixed edges','Wraparound']}];
 export const utilities:Entry[]=[
+{slug:'image',title:'Image Bench',category:'Creative',description:'Crop, resize, compress, and find its colors. No uploads.',icon:'▧',modes:[]},
 {slug:'diff',title:'Text Compare',category:'Developer',description:'See what changed, one line at a time.',icon:'+-',modes:[]},
 {slug:'timer',title:'Focus Timer',category:'Everyday',description:'A little structure for your next stretch of focus.',icon:'◷',modes:[]},
 {slug:'json',title:'JSON Studio',category:'Developer',description:'Format, compact, and make sense of your data.',icon:'{}',modes:[]},

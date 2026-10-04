@@ -9,6 +9,16 @@
     "preview": "astro preview --host 127.0.0.1",
     "test": "node --test tests/*.test.ts"
   },
-  "dependencies": { "astro": "^7.3.2", "three": "^0.183.0" },
-  "devDependencies": { "@astrojs/check": "^0.9.6", "@types/node": "^24.0.0", "@types/three": "^0.183.0", "typescript": "^5.9.3" }
+  "dependencies": {
+    "@dimforge/rapier2d-compat": "0.21.0",
+    "astro": "^7.3.2",
+    "fflate": "0.8.3",
+    "three": "^0.183.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.6",
+    "@types/node": "^24.0.0",
+    "@types/three": "^0.183.0",
+    "typescript": "^5.9.3"
+  }
 }

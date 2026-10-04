@@ -101,6 +101,7 @@ function initialize(root:HTMLElement){
   });
 
   async function snapshot():Promise<Artwork>{await rpc('pause');return rpc('snapshot');}
+  el('image').addEventListener('click',()=>act(()=>exclusive(async()=>{el('image-link').hidden=true;const doc=await snapshot(),image=await imageOf(doc,1024),blob=await new Promise<Blob|null>(resolve=>image.toBlob(resolve,'image/png'));if(!blob)throw new Error('Image export failed.');const {sendMedia}=await import('../lib/image/handoff.ts');const id=await sendMedia({kind:'image',blob,name:`living-${doc.seed}-${doc.tick}.png`});const link=el<HTMLAnchorElement>('image-link');link.href=`/tools/image/?transfer=${id}`;link.hidden=false;status('Snapshot prepared for five minutes. Open Image Bench in a new tab; this artwork stays here.');})));
   async function imageOf(doc:Artwork,size:number){const image=document.createElement('canvas');image.width=image.height=size;image.getContext('2d')!.putImageData(new ImageData(await raster(doc,size,false),size,size),0,0);return image;}
   function download(blob:Blob,name:string){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
   el('export').addEventListener('click',()=>act(()=>exclusive(async()=>{const doc=await snapshot();download(new Blob([encodeArtwork(doc)],{type:'application/json'}),`living-${doc.seed}-${doc.tick}.living.json`);status('Editable backup exported. Regions, material and growth state are included.');})));

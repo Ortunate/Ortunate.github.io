@@ -1,7 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import {games} from '../../data/catalog';
-export function getStaticPaths(){return games.map(entry=>({params:{slug:entry.slug},props:{entry}}));}
+export function getStaticPaths(){return games.filter(entry=>entry.slug!=='kinetic').map(entry=>({params:{slug:entry.slug},props:{entry}}));}
 const {entry}=Astro.props;
 ---
 <Layout title={entry.title} description={entry.description}><section class="page-section wrap game-page" data-game={entry.slug}>

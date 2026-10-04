@@ -1,0 +1,2 @@
+import { processImage,imagePalette,supportedFormats } from '../lib/image/process.ts';
+self.onmessage=async(event:MessageEvent)=>{const {id,command,blob,recipe,count,before}=event.data;try{const result=command==='encode'?await processImage(blob,recipe,before):command==='palette'?await imagePalette(blob,count):await supportedFormats();self.postMessage({id,result});}catch(error){self.postMessage({id,error:error instanceof Error?error.message:'Image processing failed.'});}};
