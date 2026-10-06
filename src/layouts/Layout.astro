@@ -5,7 +5,7 @@ import { profile } from '../data/site';
 interface Props { title?: string; description?: string; home?: boolean }
 const { title = 'A little corner of the internet', description = profile.intro, home = false } = Astro.props;
 const path = Astro.url.pathname;
-const links = [['Home','/'],['Visuals','/visuals/'],['Create','/studio/'],['Lab','/lab/'],['Tools','/tools/'],['Play','/play/'],['Explore','/explore/'],['About','/about/']];
+const links = [['Home','/'],['Worlds','/worlds/'],['Visuals','/visuals/'],['Create','/studio/'],['Lab','/lab/'],['Tools','/tools/'],['Play','/play/'],['Explore','/explore/'],['About','/about/']];
 ---
 <!doctype html>
 <html lang="en">

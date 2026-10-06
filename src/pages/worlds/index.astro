@@ -1,0 +1,10 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import WorldPortal from '../../components/WorldPortal.astro';
+import ElementPortal from '../../components/ElementPortal.astro';
+---
+<Layout title="Worlds — beyond the familiar" description="Different skies. Different ways to play. Three doorways out of the ordinary.">
+  <section class="worlds-gateway wrap"><header class="gateway-copy"><div class="eyebrow">THERE IS MORE THAN ONE SKY</div><h1>Somewhere <em>entirely else.</em></h1><p>Plant a meadow. Tend a luminous sea. Shape a molten landscape.<br/>Three worlds, three different ways to leave a trace.</p></header><div class="gateway-doors"><WorldPortal compact/><ElementPortal world="pelagic"/><ElementPortal world="ember"/></div><p class="gateway-note">THREE OPEN DOORWAYS · LOCAL BY NATURE · NO ACCOUNTS OR UPLOADS</p></section>
+</Layout>
+<style is:global>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:.25s}html[data-motion=reduced]::view-transition-old(root),html[data-motion=reduced]::view-transition-new(root){animation:none!important}</style>
+<style>.worlds-gateway{padding-block:65px 80px}.gateway-copy{max-width:800px;margin-bottom:48px}.gateway-copy h1{font-size:clamp(44px,5.5vw,72px);line-height:1.13;margin:26px 0;letter-spacing:-.055em}.gateway-copy em{font:italic 1em Georgia,serif;color:#d6dfbb}.gateway-copy p{font-size:14px;color:#9ba9b0;line-height:1.9}.gateway-doors{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;align-items:start}.gateway-note{font:9px monospace;letter-spacing:.13em;color:#768589;margin-top:38px}@media(max-width:760px){.worlds-gateway{padding-top:35px}.gateway-doors{grid-template-columns:1fr;gap:30px;max-width:420px;margin:auto}.gateway-copy h1{font-size:47px}.gateway-note{line-height:2;text-align:center}}</style>

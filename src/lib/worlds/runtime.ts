@@ -1,0 +1,15 @@
+import {WorldSession} from './session.ts';
+import type {World,Brush} from './model.ts';
+export type Command='init'|'run'|'pause'|'step'|'begin'|'paint'|'end'|'undo'|'redo'|'params'|'name'|'snapshot';
+export interface Request {id:number;generation:number;command:Command;data?:unknown}
+export interface Frame {state:World;running:boolean;undo:number;redo:number}
+export interface Reply {generation:number;id?:number;frame?:Omit<Frame,'state'>&{state?:World};result?:unknown;error?:string;changed?:boolean}
+// The Worker transport already clones. Local consumers need the same isolation.
+export function createWorldRuntime(send:(reply:Reply)=>void,transportClones=false){let session:WorldSession|undefined,generation=0,running=false,resume=false,timer:ReturnType<typeof setTimeout>|undefined,epoch=0;
+  const stop=()=>{running=false;epoch++;if(timer)clearTimeout(timer);timer=undefined;};
+  const frame=(includeState=true):NonNullable<Reply['frame']>=>({...(includeState?{state:transportClones?session!.state:structuredClone(session!.state)}:{}),running,undo:session!.undoStack.length,redo:session!.redoStack.length});
+  const loop=(token:number)=>{if(token!==epoch||!running||!session)return;const start=performance.now();try{session.step();send({generation,frame:frame()});timer=setTimeout(()=>loop(token),Math.max(0,1000/30-(performance.now()-start)));}catch(error){stop();send({generation,error:String(error),frame:frame()});}};
+  const start=()=>{stop();running=true;const token=epoch;timer=setTimeout(()=>loop(token),1000/30);};
+  return {dispose:stop,handle(message:Request){const {id,command,data}=message;try{let result:unknown=true,changed=false;if(command==='init'){const next=new WorldSession(data as World);stop();resume=false;session=next;generation=message.generation;}else{if(message.generation!==generation)return;if(!session)throw new Error('World is not ready.');switch(command){case 'run':session.end();resume=false;start();break;case 'pause':stop();resume=false;session.end();break;case 'step':stop();resume=false;session.end();session.step();break;case 'begin':resume=running;stop();session.begin();break;case 'paint':{const brushes=Array.isArray(data)?data:[data];if(brushes.length>32)throw new Error('Brush batch too large.');result='';for(const brush of brushes){const message=session.paint(brush as Brush);changed ||= session.lastPaintChanged;if(message)result=message;}break;}case 'end':session.end();if(resume)start();resume=false;break;case 'undo':stop();resume=false;session.undo();break;case 'redo':stop();resume=false;session.redo();break;case 'params':session.params(data);break;case 'name':session.name(data);break;case 'snapshot':stop();resume=false;session.end();break;}}
+      const includeState=!['run','pause','begin','end'].includes(command)&&(command!=='paint'||changed),out=frame(includeState);if(command==='snapshot')result=out.state;
+      send({generation,id,result,changed,frame:out});}catch(error){send({generation:message.generation,id,error:error instanceof Error?error.message:String(error)});}}};}

@@ -1,0 +1,6 @@
+---
+interface Props {title:string;description:string;world?:'windward'|'pelagic'|'ember';themeColor?:string;skipLabel?:string}
+const {title,description,world='windward',themeColor='#e9efe4',skipLabel='Skip to garden'}=Astro.props;
+import '../styles/world-base.css';
+---
+<!doctype html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/><title>{title} — ortunate</title><meta name="description" content={description}/><meta name="theme-color" content={themeColor}/><link rel="icon" href="/favicon.svg"/><link rel="canonical" href={new URL(Astro.url.pathname,Astro.site)}/><script is:inline>try{document.documentElement.dataset.motion=localStorage.getItem('ortunate:motion')||(matchMedia('(prefers-reduced-motion: reduce)').matches?'reduced':'full');}catch{document.documentElement.dataset.motion='reduced';}</script></head><body class={`${world}-world`}><a class="world-skip" href="#main">{skipLabel}</a><slot/></body></html>

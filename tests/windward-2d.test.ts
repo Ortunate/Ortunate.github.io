@@ -1,0 +1,11 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {garden,inside} from '../src/lib/windward/model.ts';
+import {projection,Garden2DView} from '../src/lib/windward/view-2d.ts';
+test('windward 2D: screen picking round-trips across view angles and screen sizes',()=>{for(const [w,h]of [[1400,900],[390,844]])for(const angle of [-2,0,.55,2]){const d=garden();d.camera.azimuth=angle;const p=projection(d,w,h);for(let x=-6;x<=6;x+=2)for(let z=-6;z<=6;z+=2)if(inside(x,z)){const screen=p.project(x,z),hit=p.unproject(screen.x,screen.y);assert.ok(hit);assert.ok(Math.hypot(hit.x-x,hit.z-z)<.002);}assert.equal(p.unproject(-10000,-10000),undefined);}});
+test('windward 2D: draw and snapshot do not mutate the document; disposal releases canvases',async()=>{
+  const oldDocument=Object.getOwnPropertyDescriptor(globalThis,'document'),oldRatio=Object.getOwnPropertyDescriptor(globalThis,'devicePixelRatio');const canvases:any[]=[],calls:any[]=[];
+  const context=new Proxy({}, {get:(_,key)=>key==='createLinearGradient'||key==='createRadialGradient'?()=>({addColorStop(){}}):(...args:any[])=>{for(const v of args)if(typeof v==='number')assert.ok(Number.isFinite(v));calls.push(key);},set:()=>true});
+  const canvas=()=>{const c={width:0,height:0,removed:false,getContext:()=>context,remove(){this.removed=true;},toBlob(callback:(blob:Blob)=>void){callback(new Blob(['png'],{type:'image/png'}));}};canvases.push(c);return c;};
+  try{Object.assign(globalThis,{document:{createElement:canvas},devicePixelRatio:2});const doc=garden(),before=JSON.stringify(doc),host={prepend(){},getBoundingClientRect:()=>({left:0,top:0,width:1000,height:800})};const view=new Garden2DView(host as any,doc,'low');view.draw(doc,[]);view.mark(0,0,1);view.draw(doc,[]);assert.ok(calls.includes('bezierCurveTo'));assert.equal((await view.snapshot(doc)).type,'image/png');assert.equal(JSON.stringify(doc),before);assert.equal(canvases[0].width,1000);view.dispose();assert.ok(canvases[0].removed);assert.equal(canvases[0].width,1);}finally{if(oldDocument)Object.defineProperty(globalThis,'document',oldDocument);else Reflect.deleteProperty(globalThis,'document');if(oldRatio)Object.defineProperty(globalThis,'devicePixelRatio',oldRatio);else Reflect.deleteProperty(globalThis,'devicePixelRatio');}
+});

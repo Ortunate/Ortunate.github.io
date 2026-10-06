@@ -6,6 +6,7 @@ const root = resolve('dist');
 const routes = ['index.html','projects/index.html','tools/index.html','play/index.html','visuals/index.html','explore/index.html','news/index.html','markets/index.html','launchpad/index.html','about/index.html','404.html',...games.map(e=>`play/${e.slug}/index.html`),...utilities.map(e=>`tools/${e.slug}/index.html`),...visuals.map(e=>`visuals/${e.slug}/index.html`)];
 routes.push('lab/index.html',...['reaction','sand','lenia'].map(model=>`lab/${model}/index.html`));
 routes.push('studio/index.html','studio/living-canvas/index.html','studio/sound-loom/index.html');
+routes.push('worlds/index.html','worlds/windward/index.html','worlds/pelagic/index.html','worlds/ember/index.html');
 for (const route of routes) assert.ok(existsSync(join(root,route)), `Missing page: ${route}`);
 let checked = 0;
 function walk(directory) {

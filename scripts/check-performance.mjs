@@ -20,6 +20,10 @@ function collect(file, visited) {
 }
 
 const budgets = {
+  'worlds/index.html': 20,
+  'worlds/windward/index.html': 45,
+  'worlds/pelagic/index.html': 45,
+  'worlds/ember/index.html': 45,
   'index.html': 12,
   'explore/index.html': 16,
   'news/index.html': 18,
@@ -38,9 +42,10 @@ const budgets = {
 for (const [route, kib] of Object.entries(budgets)) {
   const html = readFileSync(resolve(root, route), 'utf8');
   const modules = new Set();
+  const inlineModules = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)].filter(m=>/\btype="module"/.test(m[1])&&!/\bsrc=/.test(m[1])).map(m=>m[2]);
   for (const match of html.matchAll(/<script\b[^>]*\bsrc="(\/_astro\/[^\"]+\.js)"/g)) collect(resolve(root, match[1].slice(1)), modules);
-  const bytes = [...modules].reduce((sum, file) => sum + statSync(file).size, 0);
-  const compressed = [...modules].reduce((sum, file) => sum + gzipSync(readFileSync(file)).length, 0);
+  const bytes = [...modules].reduce((sum, file) => sum + statSync(file).size, 0) + inlineModules.reduce((sum, source)=>sum+Buffer.byteLength(source),0);
+  const compressed = [...modules].reduce((sum, file) => sum + gzipSync(readFileSync(file)).length, 0) + inlineModules.reduce((sum, source)=>sum+gzipSync(source).length,0);
   if (!reportOnly) {
     assert.ok(modules.size > 0, `${route}: no entry modules found; check script discovery`);
     assert.ok(bytes <= kib * 1024, `${route}: eager JS ${(bytes / 1024).toFixed(1)} KiB exceeds ${kib} KiB budget`);

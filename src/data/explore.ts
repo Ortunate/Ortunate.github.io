@@ -1,4 +1,5 @@
 import { games, utilities, visuals } from './catalog';
+import { worlds } from './worlds';
 import { bookmarks, hubs, type Bookmark } from './discover';
 
 export const exploreHub = {
@@ -8,6 +9,7 @@ export const exploreHub = {
 
 // Reuse the source catalogs so new entries appear here automatically.
 export const exploreEntries: Bookmark[] = [
+  ...worlds.filter(w=>w.available&&w.path).map(w=>({id:`world:${w.id}`,title:w.name,url:w.path!,category:'Worlds',description:w.description,badge:w.id==='windward'?'Living garden':w.id==='pelagic'?'Luminous sea':'Thermal sandbox',keywords:w.id==='windward'?'wind grass flowers nature sandbox dimension planting':w.id==='pelagic'?'sea jellyfish fish plankton current light ocean sandbox dimension':'lava heat cooling obsidian cracks material sandbox dimension'})),
   {id:'studio:sound-loom',title:'Sound Loom',url:'/studio/sound-loom/',category:'Create',description:'Weave six voices, explore repeating rhythms, and export a work of your own.',badge:'Sound studio',keywords:'music rhythm sequencer synthesis audio wav generative'},
   {id:'studio:living-canvas',title:'Living Canvas',url:'/studio/living-canvas/',category:'Create',description:'Grow a texture, freeze a detail, and sculpt a work of your own.',badge:'Material studio',keywords:'generative art mineral glaze painting freeze'},
   ...[
