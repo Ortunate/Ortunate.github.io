@@ -1,0 +1,10 @@
+<div class="saved-groups">
+  <label>View saved places<select data-group-filter><option value="">All groups</option><option value="ungrouped">Ungrouped</option></select></label>
+  <form data-group-form>
+    <label>Group name<input data-group-name maxlength="40" required placeholder="e.g. Daily reading" autocomplete="off" /></label>
+    <button class="button" type="submit">Create group</button>
+    <button class="button" type="button" data-group-rename disabled>Rename selected</button>
+    <button class="button" type="button" data-group-delete disabled>Remove selected group</button>
+  </form>
+  <p>Up to 12 groups. Each saved place belongs to one group. Removing a group keeps its places saved and moves them to Ungrouped.</p>
+</div>

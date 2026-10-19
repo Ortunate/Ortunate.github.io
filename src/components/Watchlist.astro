@@ -12,7 +12,8 @@ import { marketOptions } from '../lib/watchlist';
     <div class="watch-form-actions"><button class="button primary" type="submit" data-watch-submit>Add symbol +</button><button class="button" type="button" data-watch-cancel hidden>Cancel edit</button></div>
     <p id="watch-symbol-help" class="watch-help">US tickers, e.g. AAPL or BRK-B. Choose the listing market first.</p>
   </form>
-  <div class="watch-toolbar"><label>Show market<select data-watch-filter><option value="All">All markets</option>{Object.entries(marketOptions).map(([value,label]) => <option value={value}>{label}</option>)}</select></label><span>RESEARCH LINKS ↗</span></div>
+  <div class="watch-toolbar"><label class="watch-search">Search<input type="search" data-watch-search placeholder="Symbol, name, or note…"/></label><label>Show market<select data-watch-filter><option value="All">All markets</option>{Object.entries(marketOptions).map(([value,label]) => <option value={value}>{label}</option>)}</select></label><label>Sort<select data-watch-sort><option value="saved">Saved order</option><option value="symbol">Symbol</option><option value="name">Name</option></select></label><button class="button" type="button" data-watch-reset>Reset filters</button><button class="button" type="button" data-watch-export disabled>Export shown ↓</button></div>
+  <p class="watch-help">CSV exports include the shown symbols, names, and research notes in the displayed order. Use the Backup Center to restore your full collection.</p>
   <ul class="watch-items" data-watch-items></ul>
   <p class="watch-empty" data-watch-empty>Your list is a blank canvas. Add your first symbol above.</p>
   <div class="watch-feedback"><p role="status" aria-live="polite" data-watch-status>Stored in this browser. Notes stay here when you open a research link.</p><button class="button" type="button" data-watch-undo hidden>Undo removal</button></div>

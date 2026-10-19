@@ -1,4 +1,5 @@
 import { createResultState } from '../lib/result-state';
+import { bindTextFile, downloadText } from './text-files';
 import { transferKey } from '../lib/tool-transfer';
 import { copy, read, save } from './storage';
 import { textStats } from '../lib/text';
@@ -11,9 +12,12 @@ const value = (id: string) => $<HTMLInputElement>(id).value;
 const status = $('utility-status');
 const resultState = createResultState();
 let worker: Worker | undefined, timeout = 0;
+let cancelFileImport = () => {};
 const formats: Record<string, string> = {};
 function output(text: string) {
     resultState.accept(text);
+    const download = root.querySelector<HTMLButtonElement>('[data-download-json]');
+    if (download) download.disabled = !text;
     const compare = root.querySelector<HTMLButtonElement>('[data-send-diff]');
     if (compare) compare.disabled = !text;
     const button = root.querySelector<HTMLButtonElement>('[data-action=copy]');
@@ -36,6 +40,14 @@ root.querySelector('[data-send-diff]')?.addEventListener('click', () => {
     } catch { status.textContent = 'Automatic transfer is unavailable. Copy your result and paste it into Text Compare.'; }
 });
 function ok(message = 'Ready. Everything stays on this device.') { status.textContent = message; status.style.color = ''; }
+if (slug === 'json') {
+    cancelFileImport = bindTextFile(root.querySelector<HTMLInputElement>('[data-json-file]')!, $<HTMLTextAreaElement>('utility-input'), {characters: 2_000_000}, ok);
+    root.querySelector('[data-download-json]')!.addEventListener('click', () => {
+        if (!resultState.text) return;
+        try { downloadText(resultState.text, 'formatted.json', 'application/json'); ok('JSON download prepared.'); }
+        catch { ok('Could not download the result. Use Copy result instead.'); }
+    });
+}
 function limited() {
     if (input().length > 2000000)
         throw Error('Input is limited to 2 million characters.');
@@ -153,6 +165,7 @@ root.querySelectorAll<HTMLButtonElement>('[data-action]').forEach(button => butt
             return;
         }
         if (action === 'clear') {
+            cancelFileImport();
             cancelRegex();
             const text = $<HTMLTextAreaElement>('utility-input');
             if (text)
@@ -170,6 +183,7 @@ root.querySelectorAll<HTMLButtonElement>('[data-action]').forEach(button => butt
             return;
         }
         if (action === 'example') {
+            cancelFileImport();
             example();
             return;
         }
@@ -249,6 +263,7 @@ if (slug === 'units') {
     });
 }
 root.addEventListener('input', e => {
+    if ((e.target as HTMLInputElement).type === 'file') return;
     if (['text', 'color', 'timer'].includes(slug))
         return;
     cancelRegex();

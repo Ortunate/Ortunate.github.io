@@ -1,10 +1,14 @@
 import { makeSymbol, marketOptions, quoteSymbol, readWatchlist, researchUrl, upsertSymbol, watchlistKey, WATCH_LIMIT, type WatchedSymbol } from '../lib/watchlist';
+import {filterWatchlist, type WatchSort} from '../lib/watchlist-view';
 
 const root = document.querySelector<HTMLElement>('[data-watchlist]');
 if (root) {
   const form = root.querySelector<HTMLFormElement>('[data-watch-form]')!;
   const field = (name: string) => form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement;
   const filter = root.querySelector<HTMLSelectElement>('[data-watch-filter]')!;
+  const search = root.querySelector<HTMLInputElement>('[data-watch-search]')!;
+  const sort = root.querySelector<HTMLSelectElement>('[data-watch-sort]')!;
+  const exportButton = root.querySelector<HTMLButtonElement>('[data-watch-export]')!;
   const list = root.querySelector<HTMLUListElement>('[data-watch-items]')!;
   const status = root.querySelector<HTMLElement>('[data-watch-status]')!;
   const cancel = root.querySelector<HTMLButtonElement>('[data-watch-cancel]')!;
@@ -14,6 +18,8 @@ if (root) {
   let editing: string | null = null;
   let removed: WatchedSymbol | null = null;
   let memoryOnly = false;
+  let exporting = false;
+  const visibleEntries = () => filterWatchlist(entries, filter.value, search.value, sort.value as WatchSort);
 
   function read() {
     if (memoryOnly) return;
@@ -45,7 +51,9 @@ if (root) {
     return button;
   }
   function render() {
-    const visible = entries.filter(entry => filter.value === 'All' || entry.market === filter.value);
+    const visible = visibleEntries();
+    exportButton.disabled = exporting || !visible.length;
+    exportButton.textContent = exporting ? 'Preparing CSV…' : `Export shown (${visible.length}) ↓`;
     list.replaceChildren(...visible.map(entry => {
       const li = document.createElement('li');
       const copy = document.createElement('div');
@@ -79,7 +87,7 @@ if (root) {
     root!.querySelector('[data-watch-count]')!.textContent = `${visible.length} shown · ${entries.length} / ${WATCH_LIMIT} saved`;
     const empty = root!.querySelector<HTMLElement>('[data-watch-empty]')!;
     empty.hidden = visible.length > 0;
-    empty.textContent = entries.length ? 'No symbols in this market. Choose another market or add one above.' : 'Your list is a blank canvas. Add your first symbol above.';
+    empty.textContent = entries.length ? 'No symbols match these filters. Clear your search or choose another market.' : 'Your list is a blank canvas. Add your first symbol above.';
   }
   form.addEventListener('submit', event => {
     event.preventDefault();
@@ -88,7 +96,7 @@ if (root) {
       read();
       if (editing && !entries.some(item => item.id === editing)) { reset(); render(); throw new Error('This symbol was removed in another tab. Add it again to restore it.'); }
       entries = upsertSymbol(entries, entry);
-      filter.value = 'All'; reset(); persist(`${quoteSymbol(entry)} saved.`); field('symbol').focus();
+      filter.value = 'All'; search.value = ''; reset(); persist(`${quoteSymbol(entry)} saved.`); field('symbol').focus();
     } catch (error) { status.textContent = error instanceof Error ? error.message : 'Could not save this symbol.'; }
   });
   undo.addEventListener('click', () => {
@@ -97,12 +105,28 @@ if (root) {
     try {
       // Do not overwrite a newer version restored in another tab.
       if (!entries.some(entry => entry.id === removed!.id)) entries = upsertSymbol(entries, removed);
-      removed = null; undo.hidden = true; filter.value = 'All'; persist('Symbol restored.'); field('symbol').focus();
+      removed = null; undo.hidden = true; filter.value = 'All'; search.value = ''; persist('Symbol restored.'); field('symbol').focus();
     } catch (error) { status.textContent = error instanceof Error ? error.message : 'Could not restore this symbol.'; }
   });
   cancel.addEventListener('click', () => { reset(); field('symbol').focus(); });
   field('market').addEventListener('change', updateHelp);
   filter.addEventListener('change', render);
+  search.addEventListener('input', render);
+  sort.addEventListener('change', render);
+  root.querySelector('[data-watch-reset]')!.addEventListener('click', () => {
+    filter.value = 'All'; search.value = ''; sort.value = 'saved'; render(); search.focus();
+  });
+  exportButton.addEventListener('click', async () => {
+    const snapshot = visibleEntries();
+    if (exporting || !snapshot.length) return;
+    exporting = true; render();
+    try {
+      const [{watchlistCsv},{downloadText}] = await Promise.all([import('../lib/watchlist-export'),import('./text-files')]);
+      downloadText(watchlistCsv(snapshot), 'watchlist.csv', 'text/csv');
+      status.textContent = `CSV prepared for ${snapshot.length} shown symbols, including names and research notes.`;
+    } catch { status.textContent = 'Could not export CSV. Try again or use the Backup Center.'; }
+    finally { exporting = false; render(); }
+  });
   window.addEventListener('storage', event => { if (event.key === watchlistKey || event.key === null) { read(); render(); } });
   window.addEventListener('pageshow', () => { read(); render(); });
   read(); render(); updateHelp(); root.hidden = false;

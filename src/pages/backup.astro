@@ -1,0 +1,21 @@
+---
+import Layout from '../layouts/Layout.astro';
+import {exploreEntries} from '../data/explore';
+import {sectionNames} from '../lib/backup';
+import '../styles/backup.css';
+---
+<Layout title="Backup Center" description="Keep a copy of your saved places, reading list, and market notebook.">
+  <section class="page-section wrap workspace-tools" data-backup data-known={JSON.stringify(exploreEntries.map(entry => entry.id))}>
+    <div class="detail-heading"><div><a class="back-link" href="/explore/">← Back to Explore</a><h1>Take your orbit with you.</h1><p>A local backup of the things you have collected.</p></div><span class="privacy-label">ONLY IN YOUR BROWSER</span></div>
+    <div class="utility-surface">
+      <p class="backup-intro">Choose what to include. Watchlist backups contain your research notes; news backups contain saved headlines and read marks. Recent activity, cached feeds, passwords, and tool inputs are excluded.</p>
+      <fieldset class="backup-categories"><legend>Backup categories</legend>{Object.entries(sectionNames).map(([key,label]) => <label><input type="checkbox" value={key} data-backup-section checked/><span>{label}<small data-backup-summary={key}>Available when JavaScript is enabled.</small></span></label>)}</fieldset>
+      <div class="action-row" data-backup-controls hidden><button type="button" class="button primary" data-backup-export>Export selected ↓</button><label class="button backup-file">Choose a backup ↑<input class="sr-only" type="file" accept="application/json,.json" data-backup-file/></label></div>
+      <p class="help-text">Imports merge with your existing collections. Existing notes, stories, and pin order take priority. Unknown or invalid entries are skipped; collection limits still apply.</p>
+      <section class="backup-preview" data-backup-preview hidden aria-labelledby="backup-preview-title"><h2 id="backup-preview-title">Review before importing</h2><p>Only selected categories present in the file will be imported. Counts below show validated data; duplicates and entries beyond capacity will not be added.</p><div class="backup-table-wrap"><table><thead><tr><th>Category</th><th>Current</th><th>In file</th><th>After merge</th></tr></thead><tbody data-backup-rows></tbody></table></div><div class="action-row"><button type="button" class="button primary" data-backup-apply>Merge selected data</button><button type="button" class="button" data-backup-cancel>Cancel</button></div></section>
+      <p class="work-status" role="status" aria-live="polite" data-backup-status>Files are processed on your device. Nothing is uploaded.</p>
+      <noscript><p class="work-status">Enable JavaScript to export or restore your local data.</p></noscript>
+    </div>
+  </section>
+  <script>import '../scripts/backup';</script>
+</Layout>

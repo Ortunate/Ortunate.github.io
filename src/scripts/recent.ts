@@ -1,4 +1,4 @@
-import { personalKeys, readIds, remember } from '../lib/personal';
+import { personalKeys, readIds, remember } from '../lib/personal-storage';
 
 function record(id: string) {
   try {

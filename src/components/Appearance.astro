@@ -1,0 +1,28 @@
+---
+import controllerUrl from '../scripts/appearance.js?url&no-inline';
+import { themes, modes } from '../lib/appearance';
+---
+<button class="appearance-open" data-appearance-src={controllerUrl} type="button" aria-haspopup="dialog" aria-controls="appearance-dialog">Appearance</button>
+<dialog id="appearance-dialog" class="appearance-dialog" aria-labelledby="appearance-title">
+  <form method="dialog"><h2 id="appearance-title">Appearance</h2><button aria-label="Close appearance settings" class="appearance-close">×</button></form>
+  <fieldset disabled><legend>Theme color</legend><div class="appearance-colors">{themes.map(theme => <label><input type="radio" name="appearance-theme" value={theme} /><span class={`appearance-swatch swatch-${theme}`} aria-hidden="true"></span>{theme[0].toUpperCase() + theme.slice(1)}</label>)}</div></fieldset>
+  <fieldset disabled><legend>Color mode</legend><div class="appearance-modes">{modes.map(mode => <label><input type="radio" name="appearance-mode" value={mode} />{mode[0].toUpperCase() + mode.slice(1)}</label>)}</div></fieldset>
+  <p class="appearance-note">System follows your device. World scenery keeps its original colors.</p>
+  <p class="appearance-status" role="status" aria-live="polite"></p>
+</dialog>
+<script is:inline data-appearance-loader>
+  (() => {
+  const button = document.querySelector('.appearance-open');
+  button?.addEventListener('click', async () => {
+    button.disabled = true;
+    try {
+      const { openAppearance } = await import(button.dataset.appearanceSrc);
+      openAppearance();
+    } catch {
+      const dialog = document.querySelector('#appearance-dialog');
+      dialog.querySelector('.appearance-status').textContent = 'Settings could not load. Close and try again.';
+      if (!dialog.open) dialog.showModal();
+    } finally { button.disabled = false; }
+  });
+  })();
+</script>

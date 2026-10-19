@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {filterStories, readReadingList, toggleRead, toggleSaved, READING_LIMIT} from '../src/lib/reading.ts';
+import {filterStories, markStoriesRead, sortStories, readReadingList, toggleRead, toggleSaved, READING_LIMIT} from '../src/lib/reading.ts';
 import type {Story} from '../src/lib/news.ts';
 const story = (id = 1): Story => ({id, title: 'A new browser tool', url: 'https://example.com/read', time: 1_700_000_000, score: 10, comments: 5});
 
@@ -38,4 +38,27 @@ test('local filters combine title, domain, Unicode normalization and unread stat
   assert.deepEqual(filterStories(stories, ' ＢＲＯＷＳＥＲ example ', false, [1]).map(item => item.id), [1]);
   assert.equal(filterStories(stories, 'browser', true, [1]).length, 0);
   assert.deepEqual(filterStories(stories, '', true, [1]).map(item => item.id), [2]);
+});
+
+test('local sorting keeps ties stable and preserves the source and saved order', () => {
+  const stories = [story(1), {...story(2),score:20,time:1_700_000_001}, {...story(3),comments:10}];
+  assert.deepEqual(sortStories(stories,'score').map(item=>item.id),[2,1,3]);
+  assert.deepEqual(sortStories(stories,'time').map(item=>item.id),[2,1,3]);
+  assert.deepEqual(sortStories(stories,'comments').map(item=>item.id),[3,1,2]);
+  assert.deepEqual(sortStories(stories,'source').map(item=>item.id),[1,2,3]);
+  assert.deepEqual(stories.map(item=>item.id),[1,2,3]);
+});
+
+test('bulk read marks apply only requested IDs, preserve existing order and keep undo snapshots intact', () => {
+  const original = {version:1 as const, saved:[story()],read:Array.from({length:200},(_,i)=>i+1)};
+  const next = markStoriesRead(original,[201,1,202,201,-1,NaN]);
+  assert.deepEqual(next.read.slice(0,5),[201,202,1,2,3]);
+  assert.equal(next.read.length,200);
+  assert.equal(next.read.includes(200),false);
+  assert.deepEqual(next.saved,original.saved);
+  assert.equal(original.read.length,200);
+  assert.equal(original.read.at(-1),200);
+  assert.deepEqual(markStoriesRead(next,[201,202]),next);
+  const filtered = filterStories([story(203),{...story(204),title:'Other'}],'browser',false,next.read);
+  assert.equal(markStoriesRead(next,filtered.map(item=>item.id)).read.includes(204),false);
 });

@@ -1,0 +1,49 @@
+/* Surface and foreground tokens are independent of the selected accent. */
+html:root{color-scheme:dark;--bg:#090b12;--panel:#11141e;--surface:#1d2230;--text:#f0f0f2;--muted:#a3a9ba;--line:#667085;--field:#0b0e16;--on-accent:#10151c;--accent:#d1f99a;--purple:var(--accent);--error:#ffb6b6;--success:#b5e9c0;--wash:color-mix(in srgb,var(--text) 5%,transparent);--wash-hover:color-mix(in srgb,var(--text) 10%,transparent);--accent-wash:color-mix(in srgb,var(--accent) 12%,transparent)}
+html[data-color-mode=light]{color-scheme:light;--bg:#f6f7f9;--panel:#ffffff;--surface:#e9edf2;--text:#192231;--muted:#505e70;--line:#788395;--field:#ffffff;--on-accent:#ffffff;--accent:#32651c;--error:#a52238;--success:#246537}
+html[data-theme=blue]{--accent:#9acbff}html[data-theme=purple]{--accent:#d0b8ff}html[data-theme=rose]{--accent:#ffb3ca}html[data-theme=amber]{--accent:#f4d083}
+html[data-color-mode=light][data-theme=blue]{--accent:#175ca4}html[data-color-mode=light][data-theme=purple]{--accent:#7040aa}html[data-color-mode=light][data-theme=rose]{--accent:#a82d55}html[data-color-mode=light][data-theme=amber]{--accent:#805400}
+html{accent-color:var(--accent)}
+html :focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+::selection{background:var(--accent);color:var(--on-accent)}
+.site-header{gap:12px}.site-header nav{min-width:0}.site-header .appearance-open{flex-shrink:0}
+button.appearance-open{font:500 12px/1.4 system-ui,sans-serif;min-height:44px;padding:9px 12px;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:8px;cursor:pointer}
+dialog.appearance-dialog{box-sizing:border-box;width:min(460px,calc(100% - 32px));max-height:calc(100dvh - 32px);overflow:auto;padding:24px;border:1px solid var(--line);border-radius:16px;background:var(--panel);color:var(--text);font:14px/1.6 system-ui,sans-serif;box-shadow:0 24px 90px #0006;text-align:left;pointer-events:auto}
+.appearance-dialog::backdrop{background:#0008;backdrop-filter:blur(4px)}
+.appearance-dialog form{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}
+.appearance-dialog h2{margin:0;font:600 24px/1.3 system-ui,sans-serif;letter-spacing:0}
+.appearance-dialog button.appearance-close{width:44px;height:44px;padding:0;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--text);font:24px system-ui;cursor:pointer}
+.appearance-dialog fieldset{border:0;padding:0;margin:0 0 20px;min-width:0}
+.appearance-dialog legend{font-weight:600;margin-bottom:10px;padding:0}
+.appearance-colors,.appearance-modes{display:flex;flex-wrap:wrap;gap:8px}
+.appearance-dialog label{display:flex;align-items:center;gap:7px;padding:10px;border:1px solid var(--line);border-radius:8px;cursor:pointer;min-height:44px;box-sizing:border-box}
+.appearance-dialog label:has(:checked){border-color:var(--accent);background:var(--accent-wash)}
+.appearance-dialog input{width:16px;height:16px;min-height:0;margin:0;accent-color:var(--accent)}
+.appearance-swatch{width:12px;height:12px;border-radius:50%;border:1px solid currentColor;background:var(--swatch)}
+.swatch-green{--swatch:#68a944}.swatch-blue{--swatch:#438dd5}.swatch-purple{--swatch:#a575dc}.swatch-rose{--swatch:#d9658b}.swatch-amber{--swatch:#c89630}
+.appearance-dialog .appearance-note,.appearance-dialog .appearance-status{font-size:12px;line-height:1.7;color:var(--muted);margin:12px 0 0;letter-spacing:0;text-shadow:none}
+.appearance-status{min-height:2em}
+.world-header-actions{display:flex;align-items:center;gap:8px}
+/* Opaque UI surfaces keep text readable over either original scene. */
+html[data-theme] :is(.wind-header,.element-header){background:var(--panel);color:var(--text);border-bottom:1px solid var(--line)}
+html[data-theme] :is(.pelagic-world,.ember-world){--world-ink:var(--text);--world-muted:var(--muted);--world-line:var(--line);--world-panel:var(--panel);--world-accent:var(--accent)}
+html[data-theme] :is(.wind-panel,.wind-tools){background:var(--panel);color:var(--text);border-color:var(--line)}
+html[data-theme] :is(.wind-header,.wind-panel,.wind-tools) button{background:var(--surface);color:var(--text);border-color:var(--line)}
+html[data-theme] :is(.wind-header,.wind-panel,.wind-tools) button[aria-pressed=true],html[data-theme] .element-tools button[aria-pressed=true]{background:var(--accent);color:var(--on-accent)}
+html[data-theme] :is(.wind-panel,.element-panel) :is(input:not([type=range]),select){background:var(--field);color:var(--text);border-color:var(--line)}
+html[data-theme] :is(.wind-panel h3,.wind-small,.wind-panel details,.wind-back,.wind-wordmark span){color:var(--muted)}
+html[data-theme] .wind-panel h2 em{color:var(--accent)}
+html[data-theme] :is(.wind-bottom>p,.element-dock>p){background:var(--panel);color:var(--muted);text-shadow:none;border-radius:6px;padding:4px 8px}
+/* Scene typography is part of the artwork, not the interface palette. */
+.pelagic-world .element-poem{--world-ink:#d2ebe5;--world-muted:#80a8ad;--world-accent:#b1e7d6;color:var(--world-ink)}
+.ember-world .element-poem{--world-ink:#e4d2bd;--world-muted:#ac9083;--world-accent:#e5b181;color:var(--world-ink)}
+html[data-theme] .world-skip{background:var(--panel);color:var(--text)}
+html[data-theme] :is(.wind-panel section,.wind-library-item){border-color:var(--line)}
+html[data-theme] .wind-tools i{background:var(--line)}
+html[data-theme] .wind-panel input[type=range]{accent-color:var(--accent)}
+html[data-theme] :is(#wind-status,#element-status)[data-error=true]{color:var(--error);background:var(--panel)}
+html[data-theme] :is(.wind-header,.element-header) .appearance-dialog span{margin:0}
+html[data-theme] :is(.wind-header,.element-header) .appearance-dialog .appearance-swatch{display:inline-block}
+html[data-theme] .site-header .header-github{display:none}
+@media(max-width:1200px){.site-header nav a{padding-inline:8px}.site-header .header-github{display:none}}
+@media(max-width:760px){.site-header .appearance-open{position:absolute;right:0;top:22px}.world-header-actions{gap:5px}.wind-header,.element-header{flex-wrap:wrap;gap:8px}.wind-header .wind-wordmark,.element-header .element-brand{position:static;transform:none;order:3;width:100%;font-size:22px}.wind-header .wind-wordmark span,.element-header .element-brand span{display:none}.world-header-actions .appearance-open{font-size:11px;padding:8px}.appearance-dialog{padding:20px}}

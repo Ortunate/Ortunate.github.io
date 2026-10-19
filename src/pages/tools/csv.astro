@@ -1,0 +1,20 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout title="CSV ↔ JSON" description="Convert local tabular data between CSV and JSON.">
+  <section class="page-section wrap workspace-tools" data-csv>
+    <div class="detail-heading"><div><a class="back-link" href="/tools/">← Back to the toolbox</a><h1>CSV ↔ JSON</h1><p>A different shape for the same data.</p></div><span class="privacy-label">ONLY IN YOUR BROWSER</span></div>
+    <div class="utility-surface">
+      <div class="utility-fields"><label>Conversion<select data-csv-direction><option value="json">CSV → JSON</option><option value="csv">JSON → CSV</option></select></label><label>CSV separator<select data-csv-delimiter><option value=",">Comma</option><option value=";">Semicolon</option><option value="tab">Tab</option></select></label></div>
+      <label for="csv-input">Source data</label><textarea id="csv-input" data-csv-input maxlength="100000" spellcheck="false" placeholder="Paste CSV with headers, or a JSON array of objects…"></textarea>
+      <div class="tool-file-row"><label class="button tool-file-picker">Open CSV / JSON file<input data-csv-file type="file" class="sr-only" accept=".csv,.tsv,.json,.txt,text/*,application/json"/></label><span>UTF-8 text. Loading a file replaces the input.</span></div>
+      <div class="action-row"><button type="button" class="button primary" data-csv-run>Convert</button><button type="button" class="button" data-csv-example>Try an example</button><button type="button" class="button" data-csv-clear>Clear</button></div>
+      <p class="help-text">Up to 100,000 input characters, 1,000 data rows, and 100 columns. CSV requires unique, non-empty headers; quoted separators, quotes, and newlines are supported. CSV values stay strings, including dates and leading zeros. JSON must be an array of flat objects; missing fields and null become empty CSV cells.</p>
+      <pre class="utility-output" data-csv-output aria-label="Conversion result" tabindex="0">Your result will appear here.</pre>
+      <div class="action-row"><button type="button" class="button" data-csv-copy disabled>Copy result</button><button type="button" class="button" data-csv-download disabled>Download result ↓</button></div>
+      <p class="work-status" data-csv-status role="status" aria-live="polite">Data stays on this device. Nothing is uploaded or saved by this tool.</p>
+      <noscript><p class="work-status">Enable JavaScript to convert data locally.</p></noscript>
+    </div>
+  </section>
+  <script>import '../../scripts/csv';</script>
+</Layout>

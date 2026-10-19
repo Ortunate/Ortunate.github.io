@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { importPersonal, normalizePersonal, readIds, remember } from '../src/lib/personal.ts';
+import { groupName, GROUP_LIMIT, importPersonal, mergePersonal, normalizeGroups, normalizePersonal, readGroups, readIds, remember } from '../src/lib/personal.ts';
 
 test('recent entries are deduplicated, promoted, and bounded without mutating input', () => {
   const old = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
@@ -35,4 +35,25 @@ test('invalid imports fail without changing the collection; corrupt storage is r
   assert.deepEqual(current.saved, ['a']);
   assert.deepEqual(readIds('{'), []);
   assert.deepEqual(readIds('["a",null,"a",42,"b"]'), ['a', 'b']);
+});
+
+test('groups normalize names, reject invalid data, and assign each saved ID only once', () => {
+  const groups = normalizeGroups([null, {name:'  Ｗork  ',ids:['a','missing']}, {name:'work',ids:['b','a']}, {name:'Later',ids:['a','c']}, {name:'',ids:['c']}], ['a','b','c']);
+  assert.deepEqual(groups, [{name:'Work',ids:['a','b']},{name:'Later',ids:['c']}]);
+  assert.deepEqual(readGroups('{', ['a']), []);
+  assert.equal(normalizeGroups(Array.from({length:20}, (_,i) => ({name:`Group ${i}`,ids:[]})), []).length, GROUP_LIMIT);
+  assert.throws(() => groupName(' '.repeat(5)));
+  assert.throws(() => groupName('a'.repeat(41)));
+});
+
+test('group merges preserve current assignments, ungrouped places and pin order', () => {
+  const known = new Set(['a','b','c','d']);
+  const current = normalizePersonal(['a','b'], ['b','a'], known, [{name:'Work',ids:['a']}]);
+  const incoming = normalizePersonal(['a','b','c','d'], ['c','a'], known, [{name:'work',ids:['b','c']},{name:'Other',ids:['a','d']}]);
+  const merged = mergePersonal(current, incoming, known);
+  assert.deepEqual(merged.groups, [{name:'Work',ids:['a','c']},{name:'Other',ids:['d']}]);
+  assert.deepEqual(merged.pinned, ['b','a','c']);
+  assert.deepEqual(importPersonal(JSON.stringify(incoming), current, known), merged);
+  assert.deepEqual(mergePersonal(merged, incoming, known), merged);
+  assert.deepEqual(current.groups, [{name:'Work',ids:['a']}]);
 });

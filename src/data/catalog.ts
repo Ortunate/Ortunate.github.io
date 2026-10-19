@@ -11,6 +11,7 @@ export const games:Entry[]=[
 {slug:'life',title:'Game of Life',category:'Sandbox',description:'Draw a seed. Watch a world emerge.',icon:'⠿',modes:['Fixed edges','Wraparound']}];
 export const utilities:Entry[]=[
 {slug:'image',title:'Image Bench',category:'Creative',description:'Crop, resize, compress, and find its colors. No uploads.',icon:'▧',modes:[]},
+{slug:'csv',title:'CSV ↔ JSON',category:'Developer',description:'Turn tabular data into a different shape, locally.',icon:'⇆',modes:[]},
 {slug:'diff',title:'Text Compare',category:'Developer',description:'See what changed, one line at a time.',icon:'+-',modes:[]},
 {slug:'timer',title:'Focus Timer',category:'Everyday',description:'A little structure for your next stretch of focus.',icon:'◷',modes:[]},
 {slug:'json',title:'JSON Studio',category:'Developer',description:'Format, compact, and make sense of your data.',icon:'{}',modes:[]},

@@ -1,41 +1,9 @@
-export const feeds = {top: 'Top stories', new: 'Newest', show: 'Show HN'} as const;
-export type Feed = keyof typeof feeds;
-export interface Story { id: number; title: string; url: string; time: number; score: number; comments: number }
-export interface NewsCache { fetchedAt: number; stories: Story[]; partial: boolean }
-export const CACHE_TTL = 10 * 60_000;
+import {normalizeStory, normalizeStoredStory, validId, type Feed, type NewsCache, type Story, type StoryId} from './news-model.ts';
+export * from './news-model.ts';
 const API = 'https://hacker-news.firebaseio.com/v0';
-const validId = (value: unknown): value is number => typeof value === 'number' && Number.isSafeInteger(value) && value > 0;
-export const discussionUrl = (id: number) => `https://news.ycombinator.com/item?id=${id}`;
-
-export function normalizeStory(value: unknown): Story | null {
-  if (!value || typeof value !== 'object') return null;
-  const item = value as Record<string, unknown>;
-  if (!validId(item.id) || item.type !== 'story' || item.deleted || item.dead || typeof item.title !== 'string' || !item.title.trim() ||
-      typeof item.time !== 'number' || !Number.isInteger(item.time) || item.time <= 0 || item.time > 8_640_000_000) return null;
-  let url = discussionUrl(item.id);
-  try {
-    const candidate = new URL(String(item.url));
-    if (['https:', 'http:'].includes(candidate.protocol) && !candidate.username && !candidate.password) url = candidate.href;
-  } catch { /* Text-only posts open their discussion. */ }
-  const count = (value: unknown) => typeof value === 'number' && Number.isSafeInteger(value) && value >= 0 ? value : 0;
-  return {id: item.id, title: item.title.trim().slice(0, 500), url, time: item.time, score: count(item.score), comments: count(item.descendants)};
-}
-
-export function readNewsCache(raw: string | null, now = Date.now()): NewsCache | null {
-  try {
-    const value = JSON.parse(raw || 'null');
-    if (!value || !Number.isFinite(value.fetchedAt) || value.fetchedAt > now || now - value.fetchedAt > 7 * 86_400_000 || !Array.isArray(value.stories)) return null;
-    const seen = new Set<number>();
-    const stories = value.stories.slice(0, 12).flatMap((item: Story) => {
-      const story = item && normalizeStory({...item, type: 'story', descendants: item.comments});
-      if (!story || seen.has(story.id)) return [];
-      seen.add(story.id); return [story];
-    });
-    return stories.length ? {fetchedAt: value.fetchedAt, stories, partial: value.partial === true || stories.length !== value.stories.length} : null;
-  } catch { return null; }
-}
 
 export async function loadNews(feed: Feed, signal: AbortSignal, fetcher: typeof fetch = fetch): Promise<NewsCache> {
+  if (feed === 'dev') return loadDevNews(signal, fetcher);
   async function json(path: string): Promise<unknown> {
     signal.throwIfAborted();
     const response = await fetcher(`${API}/${path}.json`, {signal, cache: 'no-store', credentials: 'omit', referrerPolicy: 'no-referrer'});
@@ -61,4 +29,26 @@ export async function loadNews(feed: Feed, signal: AbortSignal, fetcher: typeof 
   const available = stories.filter((story): story is Story => story !== null);
   if (!available.length) throw new Error('Stories could not be loaded.');
   return {fetchedAt: Date.now(), stories: available, partial: available.length < ids.length};
+}
+
+export async function loadDevNews(signal: AbortSignal, fetcher: typeof fetch = fetch): Promise<NewsCache> {
+  signal.throwIfAborted();
+  const response = await fetcher('https://dev.to/api/articles?per_page=12', {
+    signal, cache: 'no-store', credentials: 'omit', referrerPolicy: 'no-referrer',
+    headers: {Accept: 'application/vnd.forem.api-v1+json'},
+  });
+  if (!response.ok) throw new Error('DEV Community is unavailable.');
+  const data: unknown = await response.json();
+  signal.throwIfAborted();
+  if (!Array.isArray(data)) throw new Error('Unexpected DEV response.');
+  const seen = new Set<StoryId>();
+  const stories = data.slice(0, 12).flatMap(item => {
+    if (!item || !validId(item.id)) return [];
+    const story = normalizeStoredStory({id: `dev:${item.id}`, title: item.title, url: item.url,
+      time: Math.floor(Date.parse(item.published_at) / 1000), score: item.public_reactions_count, comments: item.comments_count});
+    if (!story || seen.has(story.id)) return [];
+    seen.add(story.id); return [story];
+  });
+  if (!stories.length) throw new Error('No DEV articles available.');
+  return {fetchedAt: Date.now(), stories, partial: stories.length < Math.min(data.length, 12)};
 }

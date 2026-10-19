@@ -25,12 +25,14 @@ const budgets = {
   'worlds/pelagic/index.html': 45,
   'worlds/ember/index.html': 45,
   'index.html': 12,
+  'backup/index.html': 18,
   'explore/index.html': 16,
   'news/index.html': 18,
   'markets/index.html': 18,
   'launchpad/index.html': 12,
   'tools/json/index.html': 25,
-  'tools/diff/index.html': 12,
+  'tools/diff/index.html': 9,
+  'tools/csv/index.html': 14,
   'visuals/index.html': 45,
   'studio/living-canvas/index.html': 40,
   'play/kinetic/index.html': 45,
@@ -41,6 +43,9 @@ const budgets = {
 };
 for (const [route, kib] of Object.entries(budgets)) {
   const html = readFileSync(resolve(root, route), 'utf8');
+  // Pre-paint appearance code is inline classic JS, separate from module budgets.
+  // check-build enforces its own 2.5 KiB cap on every page, including 404.
+  const appearanceBytes = [...html.matchAll(/<script\b[^>]*data-appearance-(?:bootstrap|loader)[^>]*>([\s\S]*?)<\/script>/g)].reduce((sum, match) => sum + Buffer.byteLength(match[1]), 0);
   const modules = new Set();
   const inlineModules = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)].filter(m=>/\btype="module"/.test(m[1])&&!/\bsrc=/.test(m[1])).map(m=>m[2]);
   for (const match of html.matchAll(/<script\b[^>]*\bsrc="(\/_astro\/[^\"]+\.js)"/g)) collect(resolve(root, match[1].slice(1)), modules);
@@ -50,5 +55,5 @@ for (const [route, kib] of Object.entries(budgets)) {
     assert.ok(modules.size > 0, `${route}: no entry modules found; check script discovery`);
     assert.ok(bytes <= kib * 1024, `${route}: eager JS ${(bytes / 1024).toFixed(1)} KiB exceeds ${kib} KiB budget`);
   }
-  console.log(`${route}: ${(bytes / 1024).toFixed(1)} KiB eager JS / ${(compressed / 1024).toFixed(1)} KiB gzip estimate (${modules.size} modules)`);
+  console.log(`${route}: ${(bytes / 1024).toFixed(1)} KiB eager modules / ${(compressed / 1024).toFixed(1)} KiB gzip estimate (${modules.size} modules), plus ${(appearanceBytes / 1024).toFixed(1)} KiB inline appearance JS`);
 }

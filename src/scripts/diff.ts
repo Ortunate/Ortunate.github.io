@@ -1,4 +1,5 @@
-import { compareLines, comparisonText, type DiffLine } from '../lib/diff';
+import { compareLines, comparisonText, DIFF_CHAR_LIMIT, DIFF_LINE_LIMIT, type DiffLine } from '../lib/diff';
+import { bindTextFile, downloadText } from './text-files';
 import { readTransfer, transferKey } from '../lib/tool-transfer';
 import { copy } from './storage';
 
@@ -8,8 +9,10 @@ const before = find<HTMLTextAreaElement>('before'), after = find<HTMLTextAreaEle
 const trim = find<HTMLInputElement>('trim'), changes = find<HTMLInputElement>('changes');
 const status = find('status'), result = find('result'), output = find('lines');
 const copyButton = find<HTMLButtonElement>('copy');
+const downloadButton = find<HTMLButtonElement>('download');
+const cancelImports = [before, after].map((input, index) => bindTextFile(find<HTMLInputElement>(index ? 'file-after' : 'file-before'), input, {characters: DIFF_CHAR_LIMIT, lines: DIFF_LINE_LIMIT}, message => {status.textContent = message;}));
 let lines: DiffLine[] | null = null;
-function invalidate() { lines = null; output.replaceChildren(); result.hidden = true; copyButton.disabled = true; status.textContent = 'Text or options changed. Compare again to see the result.'; }
+function invalidate() { lines = null; output.replaceChildren(); result.hidden = true; copyButton.disabled = downloadButton.disabled = true; status.textContent = 'Text or options changed. Compare again to see the result.'; }
 function render() {
   if (!lines) return;
   const additions = lines.filter(line => line.kind === 'add').length, removals = lines.filter(line => line.kind === 'remove').length;
@@ -23,7 +26,7 @@ function render() {
     const text = document.createElement('code'); text.textContent = line.text || ' '; row.append(text); return row;
   }));
   if (!visible.length) { const empty = document.createElement('p'); empty.textContent = 'No lines to display.'; output.append(empty); }
-  result.hidden = false; copyButton.disabled = lines.length === 0;
+  result.hidden = false; copyButton.disabled = downloadButton.disabled = lines.length === 0;
 }
 function run() {
   try { lines = compareLines(before.value, after.value, trim.checked); render(); }
@@ -32,10 +35,15 @@ function run() {
 for (const input of [before, after, trim]) input.addEventListener('input', invalidate);
 changes.addEventListener('change', render);
 find('run').addEventListener('click', run);
-find('swap').addEventListener('click', () => { [before.value, after.value] = [after.value, before.value]; invalidate(); run(); });
-find('clear').addEventListener('click', () => { before.value = after.value = ''; invalidate(); status.textContent = 'Both inputs cleared.'; before.focus(); });
-find('example').addEventListener('click', () => { before.value = 'A little corner of the internet.\nMake something useful.\nStay curious.'; after.value = 'A little corner of the internet.\nMake something playful.\nStay curious.\nShare what you learn.'; invalidate(); run(); });
+find('swap').addEventListener('click', () => { cancelImports.forEach(cancel => cancel()); [before.value, after.value] = [after.value, before.value]; invalidate(); run(); });
+find('clear').addEventListener('click', () => { cancelImports.forEach(cancel => cancel()); before.value = after.value = ''; invalidate(); status.textContent = 'Both inputs cleared.'; before.focus(); });
+find('example').addEventListener('click', () => { cancelImports.forEach(cancel => cancel()); before.value = 'A little corner of the internet.\nMake something useful.\nStay curious.'; after.value = 'A little corner of the internet.\nMake something playful.\nStay curious.\nShare what you learn.'; invalidate(); run(); });
 copyButton.addEventListener('click', () => { if (lines) void copy(comparisonText(lines)); });
+downloadButton.addEventListener('click', () => {
+  if (!lines) return;
+  try { downloadText(comparisonText(lines), 'comparison.txt'); status.textContent = 'Comparison download prepared with all compared lines.'; }
+  catch { status.textContent = 'Could not download the comparison. Use Copy comparison instead.'; }
+});
 try {
   const raw = sessionStorage.getItem(transferKey);
   sessionStorage.removeItem(transferKey);

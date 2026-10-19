@@ -1,6 +1,7 @@
 import { matchesBrowse, parseSaved, readBrowseState, writeBrowseState } from '../lib/browse';
 
-import { personalKeys, readIds } from '../lib/personal';
+import { personalKeys, readIds } from '../lib/personal-storage';
+import { readGroups } from '../lib/personal';
 const storageKey = personalKeys.saved;
 document.querySelectorAll<HTMLElement>('[data-directory]').forEach(root => {
   const cards = [...root.querySelectorAll<HTMLElement>('[data-entry]')];
@@ -66,7 +67,10 @@ document.querySelectorAll<HTMLElement>('[data-directory]').forEach(root => {
       if (saved.has(id)) saved.delete(id); else saved.add(id);
       try {
         localStorage.setItem(storageKey, JSON.stringify([...saved]));
-        if (!saved.has(id)) localStorage.setItem(personalKeys.pinned, JSON.stringify(readIds(localStorage.getItem(personalKeys.pinned)).filter(pin => pin !== id)));
+        if (!saved.has(id)) {
+          localStorage.setItem(personalKeys.pinned, JSON.stringify(readIds(localStorage.getItem(personalKeys.pinned)).filter(pin => pin !== id)));
+          localStorage.setItem(personalKeys.groups, JSON.stringify(readGroups(localStorage.getItem(personalKeys.groups), [...saved])));
+        }
       }
       catch { memoryOnly = true; }
       window.dispatchEvent(new CustomEvent('ortunate:saved', {detail: {saved: [...saved], memoryOnly}}));
