@@ -46,4 +46,11 @@ html[data-theme] :is(.wind-header,.element-header) .appearance-dialog span{margi
 html[data-theme] :is(.wind-header,.element-header) .appearance-dialog .appearance-swatch{display:inline-block}
 html[data-theme] .site-header .header-github{display:none}
 @media(max-width:1200px){.site-header nav a{padding-inline:8px}.site-header .header-github{display:none}}
-@media(max-width:760px){.site-header .appearance-open{position:absolute;right:0;top:22px}.world-header-actions{gap:5px}.wind-header,.element-header{flex-wrap:wrap;gap:8px}.wind-header .wind-wordmark,.element-header .element-brand{position:static;transform:none;order:3;width:100%;font-size:22px}.wind-header .wind-wordmark span,.element-header .element-brand span{display:none}.world-header-actions .appearance-open{font-size:11px;padding:8px}.appearance-dialog{padding:20px}}
+@media(max-width:760px){.site-header .appearance-actions{margin-left:auto}.world-header-actions{gap:5px}.wind-header,.element-header{flex-wrap:wrap;gap:8px}.wind-header .wind-wordmark,.element-header .element-brand{position:static;transform:none;order:3;width:100%;font-size:22px}.wind-header .wind-wordmark span,.element-header .element-brand span{display:none}.world-header-actions .appearance-open{font-size:11px;padding:8px}.appearance-dialog{padding:20px}}
+
+.appearance-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;margin-left:auto}
+button.mode-toggle{display:grid;place-items:center;width:44px;min-width:44px;height:44px;padding:0;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:8px;font:24px/1 system-ui;cursor:pointer}
+html[data-theme] :is(.wind-header,.element-header) .mode-toggle span{display:inline;margin:0}
+.mode-status{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-width:760px){.site-header .brand{font-size:20px}.site-header .appearance-actions{gap:5px}.site-header .appearance-open{font-size:11px;padding:8px}.world-header-actions{margin-left:auto}.world-header-actions .appearance-actions{gap:5px}}
+@media(max-width:380px){.wind-header,.element-header{padding-inline:12px}.world-header-actions>button{max-width:75px}.world-header-actions .appearance-open{max-width:75px;white-space:normal}}

@@ -2,7 +2,7 @@ import {mergePersonal, normalizePersonal, personalKeys, readGroups, readIds, typ
 import {readReadingList, readingKey, READING_LIMIT, type ReadingList} from './reading.ts';
 import {readWatchlist, watchlistKey, WATCH_LIMIT, type WatchedSymbol} from './watchlist.ts';
 
-export const sectionNames = {bookmarks: 'Saved places, pins & groups', reading: 'Saved news & read marks', watchlist: 'Watchlist & research notes'};
+export const sectionNames = {bookmarks: 'Saved places, pins & groups', reading: 'Historical news & read marks', watchlist: 'Watchlist & research notes'};
 export const BACKUP_LIMIT = 262_144;
 export type Section = keyof typeof sectionNames;
 export interface Sections { bookmarks?: PersonalBackup; reading?: ReadingList; watchlist?: WatchedSymbol[] }

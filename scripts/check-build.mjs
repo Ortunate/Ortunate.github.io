@@ -19,12 +19,17 @@ function walk(directory) {
     assert.match(html, /<title>[^<]+<\/title>/, `Missing title: ${file}`);
     assert.equal((html.match(/id="appearance-dialog"/g) || []).length, 1, `Expected one appearance dialog: ${file}`);
     assert.equal((html.match(/name="appearance-theme"/g) || []).length, 5, `Missing theme choices: ${file}`);
-    assert.equal((html.match(/name="appearance-mode"/g) || []).length, 3, `Missing mode choices: ${file}`);
+    assert.equal((html.match(/class="mode-toggle"/g) || []).length, 1, `Missing independent mode button: ${file}`);
+    assert.equal((html.match(/name="appearance-system"/g) || []).length, 1, `Missing follow-system option: ${file}`);
     const appearanceScripts = [...html.matchAll(/<script\b[^>]*data-appearance-(?:bootstrap|loader)[^>]*>([\s\S]*?)<\/script>/g)];
     assert.equal(appearanceScripts.length, 2, `Missing appearance initialization: ${file}`);
     assert.ok(appearanceScripts.reduce((sum, match) => sum + Buffer.byteLength(match[1]), 0) <= 2560, `Appearance inline JS exceeds 2.5 KiB: ${file}`);
     assert.ok(html.indexOf('data-appearance-bootstrap') < html.indexOf('</head>'), `Appearance must initialize before paint: ${file}`);
     assert.match(html, /data-appearance-src="\/_astro\/appearance\.[^"/]+\.js"/, `Appearance controller must be an external on-demand asset: ${file}`);
+    if (file.endsWith(join('news','index.html'))) {
+      assert.doesNotMatch(html, /data-news-feed|data-news-kind|data-reading-action/, 'Live news interface must be removed');
+      assert.match(html, /https:\/\/dev\.to\//, 'DEV source link missing');
+    }
     assert.doesNotMatch(html, />Projects<|Explore projects|Things I've built/, `Old project navigation in ${file}`);
     for (const match of html.matchAll(/(?:href|src)="(\/[^"#?]*)[^\"]*"/g)) {
       const link = match[1]; if (link.startsWith('//')) continue;

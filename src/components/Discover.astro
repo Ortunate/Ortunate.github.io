@@ -5,7 +5,6 @@ import { exploreHub, exploreEntries } from '../data/explore';
 import { utilities } from '../data/catalog';
 import Workbench from './Workbench.astro';
 import Watchlist from './Watchlist.astro';
-import NewsFeed from './NewsFeed.astro';
 interface Props { kind: Hub | 'explore' }
 const {kind} = Astro.props;
 const hub = kind === 'explore' ? exploreHub : hubs[kind];
@@ -23,7 +22,6 @@ const categories = ['All', ...new Set(entries.map(entry => entry.category))];
     <p class="market-note">Quotes and charts open at the source; prices may be delayed. This is a research directory, not investment advice.</p>
   </div>}
   {kind === 'markets' && <Watchlist/>}
-  {kind === 'news' && <NewsFeed/>}
   {kind === 'news' && <div class="directory-note"><span aria-hidden="true">◎</span><p>A reading shelf, refreshed by the publishers. Open a source for its latest stories; some articles require a subscription.</p></div>}
   {kind === 'launchpad' && <div class="directory-note"><span aria-hidden="true">⌁</span><p>Looking for something quick? Our <a href="/tools/">{utilities.length} built-in tools →</a> work right here. Explore more independent tools and curious corners below.</p></div>}
   {kind === 'explore' && <div class="explore-shortcuts" aria-label="Starting points"><span>START SOMEWHERE</span><a href="/explore/?category=Tools">Get something done →</a><a href="/explore/?category=Games">Take a break →</a><a href="/explore/?category=Launchpad&q=wander">Wander a little →</a><a href="/explore/?saved=1">My saved places ☆</a></div>}

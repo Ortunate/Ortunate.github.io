@@ -1,35 +1,8 @@
 import {PIN_LIMIT} from './personal-storage.ts';
 export {personalKeys, PIN_LIMIT, RECENT_LIMIT, readIds, remember} from './personal-storage.ts';
-export const GROUP_LIMIT = 12;
-export interface SavedGroup { name: string; ids: string[] }
+import {normalizeGroups, type SavedGroup} from './personal-groups.ts';
+export {GROUP_LIMIT, groupName, normalizeGroups, readGroups, type SavedGroup} from './personal-groups.ts';
 export interface PersonalBackup { version: 1; saved: string[]; pinned: string[]; groups?: SavedGroup[] }
-
-export function groupName(raw: string): string {
-  const name = raw.normalize('NFKC').trim().replace(/\s+/g, ' ');
-  if (!name || name.length > 40) throw new Error('Use a group name of 1–40 characters.');
-  return name;
-}
-export function normalizeGroups(value: unknown, saved: string[]): SavedGroup[] {
-  if (!Array.isArray(value)) return [];
-  const groups: SavedGroup[] = [], assigned = new Set<string>(), allowed = new Set(saved);
-  for (const item of value.slice(0, 1000)) {
-    if (!item || typeof item.name !== 'string' || !Array.isArray(item.ids)) continue;
-    let name: string;
-    try { name = groupName(item.name); } catch { continue; }
-    let group = groups.find(group => group.name.toLowerCase() === name.toLowerCase());
-    if (!group) {
-      if (groups.length >= GROUP_LIMIT) continue;
-      groups.push(group = {name, ids: []});
-    }
-    for (const id of item.ids) if (typeof id === 'string' && allowed.has(id) && !assigned.has(id)) {
-      group.ids.push(id); assigned.add(id);
-    }
-  }
-  return groups;
-}
-export function readGroups(raw: string | null, saved: string[]): SavedGroup[] {
-  try { return normalizeGroups(JSON.parse(raw || '[]'), saved); } catch { return []; }
-}
 export function mergePersonal(current: PersonalBackup, incoming: PersonalBackup, known: ReadonlySet<string>): PersonalBackup {
   const existing = new Set(current.saved);
   const groups = [...(current.groups || []), ...(incoming.groups || []).map(group => ({...group, ids: group.ids.filter(id => !existing.has(id))}))];

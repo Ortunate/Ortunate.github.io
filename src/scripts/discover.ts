@@ -1,7 +1,7 @@
 import { matchesBrowse, parseSaved, readBrowseState, writeBrowseState } from '../lib/browse';
 
 import { personalKeys, readIds } from '../lib/personal-storage';
-import { readGroups } from '../lib/personal';
+import { readGroups } from '../lib/personal-groups';
 const storageKey = personalKeys.saved;
 document.querySelectorAll<HTMLElement>('[data-directory]').forEach(root => {
   const cards = [...root.querySelectorAll<HTMLElement>('[data-entry]')];

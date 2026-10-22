@@ -3,15 +3,15 @@ const status = dialog.querySelector('.appearance-status');
 function sync() {
   const { theme, mode } = document.documentElement.dataset;
   dialog.querySelectorAll('input').forEach(input => {
-    input.checked = input.value === (input.name === 'appearance-theme' ? theme : mode);
+    input.checked = input.name === 'appearance-theme' ? input.value === theme : mode === 'system';
   });
 }
 dialog.addEventListener('change', event => {
   const input = event.target;
-  if (!input.matches('input[type=radio]')) return;
+  if (!input.matches('input')) return;
   const theme = input.name === 'appearance-theme';
   const field = theme ? 'theme' : 'mode';
-  window.dispatchEvent(new CustomEvent('appearanceinput', { detail: { [field]: input.value } }));
+  window.dispatchEvent(new CustomEvent('appearanceinput', { detail: { [field]: theme ? input.value : input.checked ? 'system' : document.documentElement.dataset.colorMode } }));
   try {
     localStorage.setItem(theme ? 'ortunate:theme:v1' : 'ortunate:color-mode:v1', document.documentElement.dataset[field]);
     status.textContent = 'Appearance saved on this device.';

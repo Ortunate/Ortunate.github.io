@@ -4,7 +4,6 @@ import {Element,node,storage,run,flush,change} from './helpers/dom.ts';
 import * as personal from '../src/lib/personal.ts';
 import * as backup from '../src/lib/backup.ts';
 import * as reading from '../src/lib/reading.ts';
-import * as model from '../src/lib/news-model.ts';
 import * as csv from '../src/lib/csv.ts';
 import * as watch from '../src/lib/watchlist.ts';
 import * as view from '../src/lib/watchlist-view.ts';
@@ -59,28 +58,6 @@ test('workbench controller moves pins, manages groups, filters and retains keybo
   root.querySelector('[data-group-delete]')!.click();
   assert.equal(store.getItem(personal.personalKeys.saved),'["a","b"]');
   assert.equal(store.getItem(personal.personalKeys.groups),'[]');
-});
-
-test('news controller bulk undo restores evicted marks and rejects a concurrent read change',async()=>{
-  const root=new Element();root.dataset.newsFeed='';
-  for(const name of ['news-stories','news-status','reading-status','reading-count','news-controls','reading-controls'])node(root,`data-${name}`);
-  for(const name of ['reading-search','reading-unread'])node(root,`data-${name}`,'input');
-  node(root,'data-reading-sort','select','source');
-  for(const name of ['news-refresh','reading-mark-visible','reading-undo'])node(root,`data-${name}`,'button');
-  for(const feed of ['top','new','show','dev','saved'])node(root,'data-news-kind','button').dataset.newsKind=feed;
-  const initial={version:1,saved:[],read:Array.from({length:200},(_,i)=>i+1)};
-  const store=storage({[reading.readingKey]:JSON.stringify(initial)});
-  const stories=[201,202].map(id=>({id,title:`Article ${id}`,url:'https://example.com',time:1700000000,score:1,comments:0}));
-  run('src/scripts/news.ts',root,{'../lib/news-model':model,'../lib/reading':reading,'../lib/news':{loadNews:async()=>({stories,fetchedAt:Date.now(),partial:false})}},{localStorage:store});await flush();
-  root.querySelector('[data-reading-mark-visible]')!.click();
-  assert.equal(JSON.parse(store.getItem(reading.readingKey)!).read[0],201);
-  root.querySelector('[data-reading-undo]')!.click();
-  assert.deepEqual(JSON.parse(store.getItem(reading.readingKey)!).read,initial.read);
-  root.querySelector('[data-reading-mark-visible]')!.click();
-  const newer=JSON.parse(store.getItem(reading.readingKey)!);newer.read.unshift(300);store.setItem(reading.readingKey,JSON.stringify(newer));
-  root.querySelector('[data-reading-undo]')!.click();
-  assert.equal(JSON.parse(store.getItem(reading.readingKey)!).read[0],300);
-  assert.match(root.querySelector('[data-reading-status]')!.textContent,/can no longer be undone/);
 });
 
 test('CSV controller invalidates old downloads on edits, errors and option changes',()=>{

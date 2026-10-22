@@ -7,6 +7,7 @@ export const hubs: Record<Hub, {title: string; verb: string; heading: string; de
 };
 export const bookmarks: Record<Hub, Bookmark[]> = {
   news: [
+    {id:'dev',title:'DEV Community',url:'https://dev.to/',category:'Technology',description:'Developer articles, tutorials, and community conversations.',badge:'Community'},
     {id:'hn',title:'Hacker News',url:'https://news.ycombinator.com/',category:'Technology',description:'Ideas, engineering, startups, and the conversations around them.',badge:'Community'},
     {id:'verge',title:'The Verge',url:'https://www.theverge.com/',category:'Technology',description:'Technology at the intersection of culture, science, and everyday life.',badge:'English'},
     {id:'ars',title:'Ars Technica',url:'https://arstechnica.com/',category:'Technology',description:'Longer looks at computing, science, and the systems behind the headlines.',badge:'English'},

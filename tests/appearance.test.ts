@@ -60,14 +60,17 @@ test('settings controller saves only changed field, synchronizes controls, and s
   const dialog=Object.assign(new Element('dialog'),{open:false,showModal(){this.open=true;}});
   const status=new Element('p');status.className='appearance-status';dialog.append(status);
   const button=new Element('button');
-  for(const [name,values] of [['appearance-theme',appearance.themes],['appearance-mode',appearance.modes]] as const) {
+  for(const [name,values] of [['appearance-theme',appearance.themes]] as const) {
     for(const value of values){const input=new Element('input');input.name=name;input.value=value;input.setAttribute('type','radio');dialog.append(input);}
   }
+  const system=new Element('input');system.name='appearance-system';system.setAttribute('type','checkbox');dialog.append(system);
   const context=run('src/scripts/appearance.js',dialog,{'../lib/appearance':appearance},{window:f.window,document:{documentElement:f.root,querySelector:(s:string)=>s==='#appearance-dialog'?dialog:button},localStorage:f.store});
   (context.exports as {openAppearance:()=>void}).openAppearance();assert.equal(dialog.open,true);
   const blue=dialog.children.find(item=>item.value==='blue')!;
   change(blue,'blue');assert.equal(f.store.data.get(appearance.themeKey),'blue');assert.equal(f.store.data.has(appearance.modeKey),false);
-  f.external(appearance.modeKey,'dark');assert.equal(dialog.children.find(item=>item.value==='dark')?.checked,true);
+  f.external(appearance.modeKey,'dark');assert.equal(system.checked,false);
+  system.checked=true;change(system,'');assert.equal(f.root.dataset.mode,'system');
+  system.checked=false;change(system,'');assert.equal(f.root.dataset.mode,'light');
   f.store.setItem=()=>{throw new Error('Full');};
   change(blue,'blue');assert.match(status.textContent,/could not be saved/);assert.equal(f.root.dataset.theme,'blue');
   dialog.dispatchEvent(new Event('close'));assert.equal(button.focused,true);
@@ -94,4 +97,19 @@ test('all ten palettes meet text, accent-label and control contrast requirements
     }
     assert.ok(contrast(tokens.accent,tokens['on-accent'])>=4.5,`${theme}/${mode}: accent label`);
   }
+});
+
+for(const theme of appearance.themes) test(`${theme}: independent day/night button works without the settings module`,()=>{
+ const f=fixture({[appearance.themeKey]:theme},true);
+ const toggle=Object.assign(new Element('button'),{firstElementChild:new Element('span')});
+ const open=new Element('button'),status=new Element('span');
+ const script=readFileSync('src/components/Appearance.astro','utf8').match(/<script is:inline data-appearance-loader>([\s\S]*?)<\/script>/)![1];
+ vm.runInNewContext(script,{document:{documentElement:f.root,querySelector:(selector:string)=>selector==='.mode-toggle'?toggle:selector==='.appearance-open'?open:status},window:f.window,localStorage:f.store,CustomEvent});
+ assert.equal(toggle.getAttribute('aria-label'),'Switch to light mode');
+ assert.equal(toggle.firstElementChild.textContent,'☀');
+ toggle.click();assert.equal(f.root.dataset.colorMode,'light');assert.equal(f.store.getItem(appearance.modeKey),'light');assert.equal(f.root.dataset.theme,theme);
+ assert.equal(toggle.firstElementChild.textContent,'☾');
+ f.media.matches=false;f.media.dispatchEvent(new Event('change'));toggle.click();assert.equal(f.root.dataset.colorMode,'dark');
+ f.external(appearance.modeKey,'light');assert.equal(toggle.getAttribute('aria-label'),'Switch to dark mode');
+ f.store.setItem=()=>{throw new Error('Unavailable');};toggle.click();assert.equal(f.root.dataset.colorMode,'dark');assert.match(status.textContent,/could not be saved/);
 });
