@@ -20,6 +20,8 @@ function collect(file, visited) {
 }
 
 const budgets = {
+  'play/index.html':12,
+  ...Object.fromEntries(['klondike','spider','freecell','poker','chess','xiangqi'].map(s=>[`play/${s}/index.html`,18])),
   'worlds/index.html': 20,
   'worlds/windward/index.html': 45,
   'worlds/pelagic/index.html': 45,

@@ -1,0 +1,5 @@
+---
+import Tabletop from '../../components/Tabletop.astro';
+---
+<Tabletop slug="poker" />
+<script>import('../../scripts/games/poker').then(m=>m.mount(document.querySelector<HTMLElement>('[data-tabletop]')!)).catch(()=>{document.getElementById('table-status')!.textContent='Game unavailable. Reconnect and download it from Play for offline use.';});</script>

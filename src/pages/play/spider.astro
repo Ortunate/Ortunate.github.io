@@ -1,0 +1,5 @@
+---
+import Tabletop from '../../components/Tabletop.astro';
+---
+<Tabletop slug="spider" />
+<script>import('../../scripts/games/solitaire').then(m=>m.mount(document.querySelector<HTMLElement>('[data-tabletop]')!)).catch(()=>{document.getElementById('table-status')!.textContent='Game unavailable. Reconnect and download it from Play for offline use.';});</script>

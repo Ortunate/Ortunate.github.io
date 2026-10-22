@@ -1,0 +1,15 @@
+---
+import Layout from '../layouts/Layout.astro';
+import {games} from '../data/catalog';
+import '../styles/tabletop.css';
+const {slug}=Astro.props;const entry=games.find(e=>e.slug===slug)!;
+---
+<Layout title={entry.title} description={entry.description}>
+<section class="page-section wrap tabletop" data-tabletop={slug}>
+<a class="back-link" href="/play/">← All games</a><h1>{entry.title}</h1><p>{entry.description}</p>
+<div class="table-controls"><label>Mode <select id="table-mode">{entry.modes.map((m,i)=><option value={i}>{m}</option>)}</select></label><button class="button" id="table-new">New game</button><div id="table-actions"></div></div>
+<p id="table-status" role="status" aria-live="polite"></p><div id="table-board" aria-label={`${entry.title} board`}></div>
+<details open><summary>How to play</summary><p id="table-rules"></p></details>
+<p class="help-text" id="table-save">Progress saves in this browser. Game saves are separate from personal backups.</p>
+</section>
+</Layout>

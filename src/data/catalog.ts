@@ -1,14 +1,18 @@
-export interface Entry { slug:string; title:string; category:string; description:string; icon:string; modes:readonly string[] }
+export interface Entry { slug:string; title:string; category:string; description:string; icon:string; modes:readonly string[]; aliases?:string }
 export const games:Entry[]=[
-{slug:'kinetic',title:'Kinetic Workshop',category:'Sandbox',description:'Build a small machine. Make a puzzle of your own.',icon:'⚙',modes:['Challenges','Workshop']},
-{slug:'2048',title:'Cosmic 2048',category:'Strategy',description:'Slide, connect, and find a bigger possibility.',icon:'2048',modes:['Classic 4×4','Roomy 5×5','Same-number links','Doubling chain']},
-{slug:'snake',title:'Neon Snake',category:'Reflex',description:'Find your rhythm. Follow the glow.',icon:'↳',modes:['Classic','Wraparound','Obstacles']},
-{slug:'tetris',title:'Falling Blocks',category:'Arcade',description:'A little order in a falling universe.',icon:'▟',modes:['Marathon','40-line sprint']},
-{slug:'breakout',title:'Prism Break',category:'Arcade',description:'Keep the light alive. Break through.',icon:'╱',modes:['Levels','Endless waves']},
-{slug:'mines',title:'Minefield',category:'Strategy',description:'Read the numbers. Trust your deductions.',icon:'✳',modes:['Beginner','Intermediate','Expert']},
-{slug:'memory',title:'Echo Pairs',category:'Memory',description:'Little constellations, waiting to be remembered.',icon:'◈',modes:['4×4 practice','6×4 practice','4×4 timed','6×4 timed']},
-{slug:'puzzle',title:'Sliding Space',category:'Strategy',description:'Everything has a place. Find its way home.',icon:'▦',modes:['3×3 numbers','4×4 numbers','3×3 gradient','4×4 gradient']},
-{slug:'life',title:'Game of Life',category:'Sandbox',description:'Draw a seed. Watch a world emerge.',icon:'⠿',modes:['Fixed edges','Wraparound']}];
+{slug:'mines',title:'Minesweeper',category:'Board',description:'Read the numbers. Clear the field.',icon:'*',modes:['Beginner','Intermediate','Expert'],aliases:'\u626b\u96f7'},
+{slug:'klondike',title:'Klondike Solitaire',category:'Cards',description:'The classic seven-column solitaire.',icon:'A',modes:['Draw one','Draw three'],aliases:'\u7eb8\u724c \u63a5\u9f99'},
+{slug:'spider',title:'Spider Solitaire',category:'Cards',description:'Build complete runs from king to ace.',icon:'K',modes:['One suit','Two suits','Four suits'],aliases:'\u8718\u86db\u63a5\u9f99'},
+{slug:'freecell',title:'FreeCell',category:'Cards',description:'Four free cells. Every card in sight.',icon:'4',modes:['Classic'],aliases:'\u7a7a\u5f53\u63a5\u9f99'},
+{slug:'poker',title:'Texas Hold’em',category:'Cards',description:'Six seats, local bots, free virtual chips.',icon:'AA',modes:['Easy','Normal','Advanced'],aliases:'\u5fb7\u6251 \u5fb7\u5dde\u6251\u514b'},
+{slug:'chess',title:'Chess',category:'Board',description:'A timeless game of plans and possibilities.',icon:'KQ',modes:['Easy','Normal','Advanced','Two players'],aliases:'\u56fd\u9645\u8c61\u68cb'},
+{slug:'xiangqi',title:'Xiangqi',category:'Board',description:'Across the river. Defend your general.',icon:'XQ',modes:['Easy','Normal','Advanced','Two players'],aliases:'\u8c61\u68cb \u4e2d\u56fd\u8c61\u68cb'},
+{slug:'2048',title:'Cosmic 2048',category:'Board',description:'Slide, connect, and find a bigger possibility.',icon:'2048',modes:['Classic 4x4','Roomy 5x5','Same-number links','Doubling chain']},
+{slug:'snake',title:'Neon Snake',category:'Arcade',description:'Find your rhythm. Follow the glow.',icon:'S',modes:['Classic','Wraparound','Obstacles']},
+{slug:'tetris',title:'Falling Blocks',category:'Arcade',description:'A little order in a falling universe.',icon:'T',modes:['Marathon','40-line sprint']},
+{slug:'breakout',title:'Prism Break',category:'Arcade',description:'Keep the light alive. Break through.',icon:'B',modes:['Levels','Endless waves']}];
+export const tabletopSlugs=['klondike','spider','freecell','poker','chess','xiangqi'];
+export const retiredGames=['memory','puzzle','life'];
 export const utilities:Entry[]=[
 {slug:'image',title:'Image Bench',category:'Creative',description:'Crop, resize, compress, and find its colors. No uploads.',icon:'▧',modes:[]},
 {slug:'csv',title:'CSV ↔ JSON',category:'Developer',description:'Turn tabular data into a different shape, locally.',icon:'⇆',modes:[]},

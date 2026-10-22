@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { games, utilities, visuals } from '../src/data/catalog.ts';
 const root = resolve('dist');
 const routes = ['index.html','projects/index.html','tools/index.html','play/index.html','visuals/index.html','backup/index.html','explore/index.html','news/index.html','markets/index.html','launchpad/index.html','about/index.html','404.html',...games.map(e=>`play/${e.slug}/index.html`),...utilities.map(e=>`tools/${e.slug}/index.html`),...visuals.map(e=>`visuals/${e.slug}/index.html`)];
+routes.push(...['kinetic','memory','puzzle','life'].map(s=>`play/${s}/index.html`));
 routes.push('lab/index.html',...['reaction','sand','lenia'].map(model=>`lab/${model}/index.html`));
 routes.push('studio/index.html','studio/living-canvas/index.html','studio/sound-loom/index.html');
 routes.push('worlds/index.html','worlds/windward/index.html','worlds/pelagic/index.html','worlds/ember/index.html');

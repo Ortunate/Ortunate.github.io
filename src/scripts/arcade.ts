@@ -29,15 +29,13 @@ async function mount() {
     let best = typeof stored === 'number' && Number.isFinite(stored) && stored >= 0 ? stored : 0;
     $('game-best').textContent = String(best);
     $('game-score').textContent = '0';
-    const recordKey = `arcade:${slug}:${mode}:record`, timed = slug === 'mines' || slug === 'tetris' && mode === 1, minimal = timed || slug === 'puzzle';
+    const recordKey = `arcade:${slug}:${mode}:record`, timed = slug === 'mines' || slug === 'tetris' && mode === 1, minimal = timed;
     let record = read<unknown>(recordKey, null);
     const showRecord = () => { $('game-best').textContent = typeof record === 'number' && Number.isFinite(record) && record >= 0 ? timed ? (record / 1000).toFixed(1) + 's' : record + ' moves' : '—'; };
     if (minimal)
         showRecord();
-    if (slug === 'life')
-        $('game-best').textContent = '—';
-    $('metric-label').textContent = slug === 'life' ? 'GENERATION' : slug === 'puzzle' ? 'MOVES' : 'SCORE';
-    $('best-label').textContent = timed ? 'BEST TIME' : slug === 'puzzle' ? 'BEST MOVES' : 'BEST';
+    $('metric-label').textContent = 'SCORE';
+    $('best-label').textContent = timed ? 'BEST TIME' : 'BEST';
     for (const button of root.querySelectorAll<HTMLButtonElement>('[data-game-key]')) {
         const k = button.dataset.gameKey!;
         button.hidden = slug === 'breakout' ? ['ArrowUp', 'ArrowDown'].includes(k) : slug === '2048' ? mode < 2 && !k.startsWith('Arrow') : false;
@@ -45,7 +43,7 @@ async function mount() {
     $('game-continue').hidden = true;
     const context: GameContext = { root, surface, grid: $('game-grid'), canvas: $<HTMLCanvasElement>('arcade-canvas'), mode, slug, signal: abort.signal, extra: $('game-extra'), setScore(value) {
             $('game-score').textContent = String(value);
-            if (!minimal && slug !== 'life' && value > best) {
+            if (!minimal && value > best) {
                 best = value;
                 save(key, best);
                 $('game-best').textContent = String(best);
@@ -65,7 +63,7 @@ async function mount() {
             }
         }, setStatus(message) { $('game-status-v2').textContent = message; }, finish(title, message) { ended = true; root.dataset.state = 'ended'; overlay.hidden = false; $('game-end-title').textContent = title; $('game-end-message').textContent = message; }, setRules(rules) { $('game-rules').textContent = rules; } };
     try {
-        const module = slug === '2048' ? await import('./games/merge') : ['mines', 'memory', 'puzzle', 'life'].includes(slug) ? await import('./games/puzzles') : await import('./games/realtime');
+        const module = slug === '2048' ? await import('./games/merge') : slug === 'mines' ? await import('./games/mines') : await import('./games/realtime');
         if (token !== generation)
             return;
         controller = module.createGame(context);
@@ -77,7 +75,7 @@ async function mount() {
         context.setStatus(`The game could not start. ${error instanceof Error ? error.message : 'Please reload.'}`);
     }
 }
-select.addEventListener('change', () => { mode = Number(select.value); const url = new URL(location.href); url.searchParams.set('mode', String(mode)); history.pushState({}, '', url); void mount(); });
+select.addEventListener('change', () => { if(root.dataset.state!=='ended'&&!confirm('Switch mode and leave this round?')){select.value=String(mode);return;} mode = Number(select.value); const url = new URL(location.href); url.searchParams.set('mode', String(mode)); history.pushState({}, '', url); void mount(); });
 window.addEventListener('popstate', () => { mode = getMode(); select.value = String(mode); void mount(); });
 function newGame() {
     controller?.save?.();
@@ -88,7 +86,7 @@ function newGame() {
     controller = undefined;
     void mount();
 }
-$('game-restart').addEventListener('click', newGame);
+$('game-restart').addEventListener('click', () => {if(ended||confirm('Replace this round with a new game?'))newGame();});
 $('game-again').addEventListener('click', newGame);
 $('game-pause').addEventListener('click', () => {
     if (!ended && controller?.pause)

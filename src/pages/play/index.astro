@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import OfflineGames from '../../components/OfflineGames.astro';
 import Collection from '../../components/Collection.astro';
 import {games} from '../../data/catalog';
 ---
-<Layout title="Play"><Collection entries={games} kind="play" heading="A small detour" subtitle="Eight little worlds. More than one way to play."/></Layout>
+<Layout title="Play"><Collection entries={games} kind="play" heading="A small detour" subtitle={`${games.length} classic and arcade games. Play at your own pace.`}/><OfflineGames /></Layout>
