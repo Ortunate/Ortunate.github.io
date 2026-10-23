@@ -6,8 +6,8 @@ visual quality and active animation rates. Measurements compare against commit
 
 | Artifact measurement | Before | After |
 | --- | ---: | ---: |
-| Complete production build | 5,557,113 B | 5,556,904 B |
-| All games' cached resource bodies | 1,206,945 B (repeated per game) | 226,684 B (shared) |
+| Complete production build | 5,557,113 B | 5,556,603 B |
+| All games' cached resource bodies | 1,206,945 B (repeated per game) | 226,383 B (shared) |
 | Offline manifest | — | 14,433 B |
 
 Resource bodies for a fresh download of all games fall by 81.2%. Manifest and
