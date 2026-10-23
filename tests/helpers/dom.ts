@@ -39,7 +39,7 @@ export class Element {
     return this.attributes[name] ?? null;
   }
   setAttribute(name: string, value: string) {if(name.startsWith('data-')) this.dataset[dataKey(name)]=value; else this.attributes[name]=value;}
-  append(...children: Element[]) {children.forEach(child=>{child.parentElement=this;this.children.push(child);});}
+  append(...children: Element[]) {children.forEach(child=>{child.remove();child.parentElement=this;this.children.push(child);});}
   replaceChildren(...children: Element[]) {this.children.forEach(child=>child.parentElement=null);this.children=[];this.append(...children);}
   remove() {if(this.parentElement) this.parentElement.children=this.parentElement.children.filter(child=>child!==this);}
   addEventListener(name: string, callback: (event: any)=>unknown) {this.listeners.set(name,[...(this.listeners.get(name)||[]),callback]);}

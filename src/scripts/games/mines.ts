@@ -29,13 +29,9 @@ function mines(c: GameContext): GameController {
     function persist() { save(saveKey, { board, revealed, flags, elapsed, over }); }
     c.setRules('Click a revealed number to clear its neighbors when the flag count matches. ' + 'Reveal all safe squares. Numbers count neighboring mines. Your first reveal and its neighbors are safe. Right-click or use Flag mode to mark a mine. Arrows move, Enter reveals, F toggles flag mode.');
     const flagButton = extraButton(c, 'Reveal mode (switch to Flag)', () => { flagMode = !flagMode; flagButton.textContent = flagMode ? 'Flag mode (switch to Reveal)' : 'Reveal mode (switch to Flag)'; flagButton.setAttribute('aria-pressed', String(flagMode)); });
-    const timer = window.setInterval(() => {
-        if (started && !over && !paused && !document.hidden) {
-            elapsed++;
-            status();
-        }
-    }, 1000);
-    function status() { c.setStatus(`${elapsed}s · ${count - flags.filter(Boolean).length} mines unmarked${paused ? ' · Paused' : ''}`); }
+    let timer=0;
+    function syncTimer(){const ticking=started&&!over&&!paused&&!document.hidden;if(ticking&&!timer)timer=window.setInterval(()=>{elapsed++;status();},1000);else if(!ticking&&timer){clearInterval(timer);timer=0;}}
+    function status() { syncTimer();c.setStatus(`${elapsed}s · ${count - flags.filter(Boolean).length} mines unmarked${paused ? ' · Paused' : ''}`); }
     function render() { persist(); cells.forEach((cell, i) => { cell.textContent = flags[i] ? '⚑' : revealed[i] ? (board![i] === -1 ? '✳' : board![i] === 0 ? '' : String(board![i])) : ''; cell.classList.toggle('revealed', revealed[i]); cell.classList.toggle('flagged', flags[i]); cell.classList.toggle('mine', revealed[i] && board?.[i] === -1); cell.style.fontSize = '22px'; cell.setAttribute('aria-label', `Row ${Math.floor(i / width) + 1}, column ${i % width + 1}: ${flags[i] ? 'flagged' : revealed[i] ? board![i] === -1 ? 'mine' : `${board![i]} adjacent mines` : 'covered'}`); }); status(); }
     function act(i: number, flag = flagMode) {
         if (over || paused)

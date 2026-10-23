@@ -1,12 +1,20 @@
 ---
 import AppearanceHead from '../components/AppearanceHead.astro';
 import Appearance from '../components/Appearance.astro';
+import PlaySession from '../components/PlaySession.astro';
 import '../styles/global.css';
 import '../styles/collection.css';
+import homeCss from '../styles/home-page.css?url&no-inline';
+import aboutCss from '../styles/about-page.css?url&no-inline';
+import directoryCss from '../styles/directory-page.css?url&no-inline';
+import arcadeCss from '../styles/arcade-page.css?url&no-inline';
+import toolsCss from '../styles/tools-page.css?url&no-inline';
+import visualsCss from '../styles/visuals-page.css?url&no-inline';
 import { profile } from '../data/site';
 interface Props { title?: string; description?: string; home?: boolean }
 const { title = 'A little corner of the internet', description = profile.intro, home = false } = Astro.props;
 const path = Astro.url.pathname;
+const pageStyles=[...(['/', '/projects/'].includes(path)?[homeCss]:[]),...(path==='/about/'?[aboutCss]:[]),...(['/play/','/tools/','/visuals/','/explore/','/news/','/markets/','/launchpad/'].includes(path)?[directoryCss]:[]),...(path.startsWith('/tools/')?[toolsCss]:[]),...(path.startsWith('/visuals/')&&path!=='/visuals/'?[visualsCss]:[]),...(/^\/play\/(?:mines|2048|snake|tetris|breakout)\/$/.test(path)?[arcadeCss]:[])];
 const links = [['Home','/'],['Worlds','/worlds/'],['Visuals','/visuals/'],['Create','/studio/'],['Lab','/lab/'],['Tools','/tools/'],['Play','/play/'],['Explore','/explore/'],['About','/about/']];
 ---
 <!doctype html>
@@ -26,6 +34,7 @@ const links = [['Home','/'],['Worlds','/worlds/'],['Visuals','/visuals/'],['Crea
       catch { document.documentElement.dataset.motion = 'reduced'; }
     </script>
     <AppearanceHead />
+    {pageStyles.map(href=><link rel="stylesheet" href={href} />)}
   </head>
   <body class:list={[{ 'home-page': home }]}>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -35,6 +44,7 @@ const links = [['Home','/'],['Worlds','/worlds/'],['Visuals','/visuals/'],['Crea
       <Appearance />
     </header>
     <main id="main"><slot /></main>
+    {path.startsWith('/play/') && <PlaySession />}
     <footer class="site-footer wrap">
       <span>© {new Date().getFullYear()} ortunate <span class="footer-divider">/</span> Made of curiosity.</span>
       <div class="footer-controls"><a href="/backup/">Backups</a><button id="motion-toggle" class="motion-toggle" aria-label="Reduce visual motion">Motion: Full <span aria-hidden="true">◉</span></button><a href={profile.github} target="_blank" rel="noopener noreferrer" aria-label="ortunate on GitHub">GitHub ↗</a></div>

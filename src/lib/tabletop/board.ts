@@ -170,10 +170,9 @@ export function raw(s: Position, m: Move): Position {
     return n;
 }
 export function legal(s: Position) { return s.board.flatMap((p, i) => side(p) === s.turn ? pseudo(s, i).filter(m => s.board[m.to].toLowerCase() !== 'k' && !inCheck(raw(s, m), s.turn)) : []); }
-export function play(s: Position, m: Move) { if (!legal(s).some(x => x.from === m.from && x.to === m.to && x.promotion === m.promotion))
+export function play(s: Position, m: Move, moves=legal(s)) { if (!moves.some(x => x.from === m.from && x.to === m.to && x.promotion === m.promotion))
     return null; const n = raw(s, m); n.history = [...s.history, key(n)]; n.checks = [...s.checks, inCheck(n) ? s.turn : -1]; return n; }
-export function outcome(s: Position, claim = false): string {
-    const moves = legal(s);
+export function outcome(s: Position, claim = false, moves=legal(s)): string {
     if (!moves.length)
         return inCheck(s) || s.kind === 'xiangqi' ? `${s.turn === 0 ? 'Black' : s.kind === 'chess' ? 'White' : 'Red'} wins` : 'Draw by stalemate';
     const count = s.history.filter(k => k === key(s)).length;

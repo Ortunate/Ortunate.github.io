@@ -50,13 +50,14 @@ export function rank(cards: Card[]): number { let best = 0; for (let a = 0; a < 
                         v.push(0);
                     best = Math.max(best, v.reduce((n, x) => n * 15 + x, 0));
                 } return best; }
-export function payouts(seats: Seat[], community: Card[], dealer: number) { const out = seats.map(() => 0), levels = [...new Set(seats.map(s => s.total).filter(Boolean))].sort((a, b) => a - b); let previous = 0; for (const level of levels) {
+export function payouts(seats: Seat[], community: Card[], dealer: number) { const ranks=seats.map(p=>p.folded?0:rank([...p.hole,...community]));
+    const out = seats.map(() => 0), levels = [...new Set(seats.map(s => s.total).filter(Boolean))].sort((a, b) => a - b); let previous = 0; for (const level of levels) {
     const contributors = seats.flatMap((s, i) => s.total >= level ? [i] : []), amount = (level - previous) * contributors.length;
     previous = level;
     const eligible = contributors.filter(i => !seats[i].folded);
     if (!eligible.length)
         continue;
-    const scores = eligible.map(i => rank([...seats[i].hole, ...community])), best = Math.max(...scores), winners = eligible.filter((_, i) => scores[i] === best).sort((a, b) => (a - dealer + 5) % 6 - (b - dealer + 5) % 6);
+    const scores = eligible.map(i => ranks[i]), best = Math.max(...scores), winners = eligible.filter((_, i) => scores[i] === best).sort((a, b) => (a - dealer + 5) % 6 - (b - dealer + 5) % 6);
     for (const i of winners)
         out[i] += Math.floor(amount / winners.length);
     for (let r = 0; r < amount % winners.length; r++)

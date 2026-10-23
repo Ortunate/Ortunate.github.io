@@ -1,0 +1,5 @@
+<script>
+const announce=()=>{const build=document.querySelector<HTMLMetaElement>('meta[name="play-build"]')?.content;if(build)navigator.serviceWorker?.controller?.postMessage({action:'hello',build});};
+announce();navigator.serviceWorker?.addEventListener('controllerchange',announce);
+navigator.serviceWorker?.addEventListener('message',e=>{if(e.data?.action==='identify')announce();});window.addEventListener('pageshow',announce);
+</script>

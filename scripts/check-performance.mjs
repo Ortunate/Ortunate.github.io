@@ -1,4 +1,4 @@
-import { readFileSync, statSync } from 'node:fs';
+import { readFileSync, statSync, readdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { gzipSync } from 'node:zlib';
 import assert from 'node:assert/strict';
@@ -6,6 +6,11 @@ import ts from 'typescript';
 
 const root = resolve('dist');
 const reportOnly = process.argv.includes('--report');
+const baseline=JSON.parse(readFileSync('docs/performance-baseline.json','utf8'));
+function directoryBytes(dir){return readdirSync(dir,{withFileTypes:true}).reduce((sum,e)=>sum+(e.isDirectory()?directoryBytes(resolve(dir,e.name)):statSync(resolve(dir,e.name)).size),0);}
+const total=directoryBytes(root);
+if(!reportOnly)assert.ok(total<=baseline.buildBytes,`Build ${total} exceeds baseline ${baseline.buildBytes}`);
+console.log(`Complete build: ${total} bytes (baseline ${baseline.buildBytes})`);
 // Include static transitive imports, but not engines requested later with import().
 function collect(file, visited) {
   if (visited.has(file)) return;
@@ -20,8 +25,8 @@ function collect(file, visited) {
 }
 
 const budgets = {
-  'play/index.html':12,
-  ...Object.fromEntries(['klondike','spider','freecell','poker','chess','xiangqi'].map(s=>[`play/${s}/index.html`,18])),
+  'play/index.html':10,
+  ...Object.fromEntries(['klondike','spider','freecell','poker','chess','xiangqi'].map(s=>[`play/${s}/index.html`,6])),
   'worlds/index.html': 20,
   'worlds/windward/index.html': 45,
   'worlds/pelagic/index.html': 45,

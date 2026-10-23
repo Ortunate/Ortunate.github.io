@@ -29,9 +29,13 @@ The Play directory offers explicit Download / Update and Remove download actions
 `scripts/offline-manifest.mjs` follows built page assets, lazy modules and Workers.
 The service worker is scoped to `/play/`; it does not cache Worlds, Create,
 external fonts or external websites. Downloads include the Play directory.
-Each game version downloads into a staging cache and becomes active only after
-all assets succeed. Failed updates preserve the old active version. Previous
-versions are retained for already-open pages until the user removes the game.
+Resources are shared by SHA-256 content hash. A game version becomes active only
+after every asset passes integrity checks and its metadata is published.
+Failed updates preserve the old active version. The current and previous versions,
+plus versions used by open pages, are retained; unreferenced resources are collected.
+Old per-game caches migrate automatically. The download panel reports shared storage
+usage and each game's additional download size. Immutable assets use the cache first;
+navigation falls back to a saved page after two seconds of waiting for the network.
 Total cache size is capped at 20 MiB, including retained versions. Removal does
 not touch localStorage. Browser eviction can remove downloads outside our control.
 

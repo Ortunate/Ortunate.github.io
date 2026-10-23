@@ -1,14 +1,16 @@
 const host = document.getElementById('orbit-scene');
 if (host) {
+    let gone=false;
     const start = async () => {
         try {
             const THREE = await import('three');
             const [{ EffectComposer }, { RenderPass }, { UnrealBloomPass }] = await Promise.all([import('three/addons/postprocessing/EffectComposer.js'), import('three/addons/postprocessing/RenderPass.js'), import('three/addons/postprocessing/UnrealBloomPass.js')]);
+            const { createOrbit } = await import('../lib/visuals/orbit');
+            if(gone)return;
             const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'high-performance' });
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.8));
             renderer.setClearColor(0x090b12, 0);
             host.appendChild(renderer.domElement);
-            const { createOrbit } = await import('../lib/visuals/orbit');
             const study = createOrbit(), scene = study.scene, camera = study.camera;
             let elapsed = 0, viewX = 0, viewY = 0;
             const composer = new EffectComposer(renderer);
@@ -51,7 +53,7 @@ if (host) {
     let started = false, scheduled = false, inView = false;
     const launch = () => {
         scheduled = false;
-        if (started || !inView || document.hidden || document.documentElement.dataset.motion === 'reduced') return;
+        if (gone || started || !inView || document.hidden || document.documentElement.dataset.motion === 'reduced') return;
         started = true;
         entrance.disconnect();
         window.removeEventListener('motionchange', schedule);
@@ -59,13 +61,14 @@ if (host) {
         void start();
     };
     const schedule = () => {
-        if (started || scheduled || !inView || document.hidden || document.documentElement.dataset.motion === 'reduced') return;
+        if (gone || started || scheduled || !inView || document.hidden || document.documentElement.dataset.motion === 'reduced') return;
         scheduled = true;
         if ('requestIdleCallback' in window) window.requestIdleCallback(launch, {timeout: 1000});
         else setTimeout(launch, 150);
     };
     const entrance = new IntersectionObserver(entries => { inView = entries[0].isIntersecting; schedule(); });
     entrance.observe(host);
+    window.addEventListener('pagehide',e=>{if(!e.persisted){gone=true;entrance.disconnect();window.removeEventListener('motionchange',schedule);document.removeEventListener('visibilitychange',schedule);}});
     window.addEventListener('motionchange', schedule);
     document.addEventListener('visibilitychange', schedule);
 }

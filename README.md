@@ -240,6 +240,8 @@ Orbital Field、Ribbon Trails、Repulsion Grid、Gravity Wells、Flow Field、Ri
 - `npm run build` 会自动运行 `scripts/check-performance.mjs`，递归计算代表页面入口的静态 JS 依赖并检查体积预算；不包含动态导入、CSS、字体或网络运行时数据。gzip 数值仅为估算，不代表完整页面加载量或测速结果。
 - 3D 引擎仍是大型动态资源，构建器的大文件提示保留；本轮优化延后其加载，没有通过调整警告阈值隐藏问题。
 
+本轮全站资源优化、体积预算和验证范围见 [性能说明](docs/performance.md)。
+
 ### 下一步
 
 按使用价值逐步增加功能，每轮优先打通一条完整使用路径：

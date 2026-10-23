@@ -22,7 +22,7 @@ function setup(root: HTMLElement) {
   worker.onmessage = (event: MessageEvent<Reply>) => {    
 const message = event.data; if (message.generation !== generation) return;
     if (message.type === 'reply') { const p = pending.get(message.id!); if (p) { clearTimeout(p.timer); pending.delete(message.id!); message.error ? p.reject(new Error(message.error)) : p.resolve(message.data); } return; }
-    if (message.type === 'frame') { latest = message.data as Frame; render(); return; }
+    if (message.type === 'frame') { latest = message.data as Frame; render();if(!latest.running&&!latest.scanning){el('fps').textContent='0';frameCount=0;fpsStart=performance.now();} return; }
     if (message.error) { status(message.error, true); return; }
     const data = message.data; if (data.scan) { scan = data.scan; renderScan(); } const completed = data.index || 0, total = data.total || 1, fraction = data.steps ? data.done / data.steps : 0; el<HTMLProgressElement>('scan-progress').value = (completed + fraction) / total; el('scan-status').textContent = data.complete ? `${total} cells complete. Inspect a result or save this atlas.` : `${completed} / ${total} cells complete${data.steps ? ` · cell step ${data.done} / ${data.steps}` : ''}`;
   };
@@ -95,6 +95,6 @@ if (!latest) return; const canvas = el<HTMLCanvasElement>('chart'), ctx = canvas
   document.addEventListener('visibilitychange', () => { if (document.hidden && !disposed) { act(() => request('pause')); status('Paused while the tab is hidden. Resume manually.'); } });
   window.addEventListener('pagehide', () => { disposed = true; worker.terminate(); for (const p of pending.values()) { clearTimeout(p.timer); p.reject(new Error('Page closed.')); } pending.clear(); });
   window.addEventListener('pageshow', event => { if (event.persisted) location.reload(); });
-  setInterval(() => { if (!latest?.running && !latest?.scanning) el('fps').textContent = '0'; }, 1500);
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)el('fps').textContent='0';});
   act(() => initialize(false)); void refreshSaves();
 }

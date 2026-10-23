@@ -11,13 +11,15 @@ async function initialize(canvas: HTMLCanvasElement) {
     if (pending.has(canvas))
         return;
     pending.add(canvas);
-    const scene = gpuKinds.includes(canvas.dataset.visual!) ? new (await (gpuModule ??= import('../lib/gpu-visual'))).GPUVisual(canvas) : new VisualScene(canvas);
+    const gpu=gpuKinds.includes(canvas.dataset.visual!)?await(gpuModule??=import('../lib/gpu-visual')):undefined;
+    if(disposed)return;
+    const scene=gpu?new gpu.GPUVisual(canvas):new VisualScene(canvas);
     if (disposed) {
         scene.dispose();
         return;
     }
     scene.visible = visibility.get(canvas) ?? false;
-    scenes.push(scene);
+    scenes.push(scene);schedule();
     if (!scene.preview)
         controls(scene);
 }
@@ -28,16 +30,17 @@ const observer = new IntersectionObserver(entries => entries.forEach(e => {
     if (scene) {
         scene.visible = e.isIntersecting;
         scene.lastDraw = 0;
-        scene.dirty = true;
+        scene.dirty = true;schedule();
     }
     else if (e.isIntersecting)
         void initialize(canvas);
 }), { rootMargin: '0px' });
-canvases.forEach(canvas => observer.observe(canvas));
+canvases.forEach(canvas => {canvas.addEventListener('sceneinvalidate',()=>schedule());observer.observe(canvas);});
 let frame = 0, last = 0;
 const reduced = () => document.documentElement.dataset.motion === 'reduced';
+function schedule(){if(!frame&&!disposed&&!document.hidden&&scenes.some(s=>s.visible&&(s.dirty||!s.paused&&!reduced())))frame=requestAnimationFrame(tick);}
 function tick(now: number) {
-    frame = requestAnimationFrame(tick);
+    frame = 0;
     if (document.hidden) {
         last = now;
         return;
@@ -66,12 +69,13 @@ function tick(now: number) {
             scene.slowFrames = 0;
         }
     }
+    schedule();if(!frame)last=0;
 }
-frame = requestAnimationFrame(tick);
+schedule();
 window.addEventListener('motionchange', () => scenes.forEach(s => s.dirty = true));
-document.addEventListener('visibilitychange', () => { last = 0; scenes.forEach(s => s.lastDraw = 0); });
+document.addEventListener('visibilitychange', () => {cancelAnimationFrame(frame);frame=0;last=0;scenes.forEach(s=>s.lastDraw=0);schedule();});
 window.addEventListener('pagehide', e => {
-    cancelAnimationFrame(frame);
+    cancelAnimationFrame(frame);frame=0;
     if (!e.persisted) {
         disposed = true;
         observer.disconnect();
@@ -83,7 +87,7 @@ window.addEventListener('pagehide', e => {
 window.addEventListener('pageshow', e => {
     if (e.persisted) {
         last = 0;
-        frame = requestAnimationFrame(tick);
+        schedule();
     }
 });
 function controls(scene: Scene) {

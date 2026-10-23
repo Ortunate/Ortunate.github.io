@@ -9,7 +9,9 @@ export class GPUVisual {
     options: VisualOptions;
     visible = false;
     paused = false;
-    dirty = true;
+    private _dirty = true;
+    get dirty(){return this._dirty;}
+    set dirty(value:boolean){this._dirty=value;if(value)this.canvas?.dispatchEvent(new Event('sceneinvalidate'));}
     fallback = false;
     quality = 1;
     lastDraw = 0;

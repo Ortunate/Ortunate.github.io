@@ -33,7 +33,9 @@ export class VisualScene {
     time = 0;
     visible = false;
     paused = false;
-    dirty = true;
+    private _dirty = true;
+    get dirty(){return this._dirty;}
+    set dirty(value:boolean){this._dirty=value;if(value)this.canvas?.dispatchEvent(new Event('sceneinvalidate'));}
     width = 0;
     height = 0;
     quality = 1;
